@@ -6,12 +6,14 @@ edit_uri: tree/main/docs
 theme:
   name: material
   language: en
+  logo: assets/netmikro.svg
+  favicon: assets/netmikro.svg
 
 markdown_extensions:
   - attr_list
 
-#extra_css:
-#	- stylesheets/extra.css
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
 - mkdocstrings:

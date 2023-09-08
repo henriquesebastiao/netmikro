@@ -4,6 +4,23 @@ from netmikro.modules import validate_ip
 
 
 class RouterOS:
+    """
+    Class that generates the connection with a MikroTik router.
+
+    Parameters:
+        host: IP address of the router you want to connect to.
+        username: Username to be used in the connection.
+        password: Password to be used in the connection.
+        ssh_port: SSH port to be used in the connection.
+        delay: Time delay between command executions on the router.
+
+    Examples:
+        >>> from netmikro import RouterOS
+        >>> router = RouterOS('192.168.88.1', 'admin', 'admin', 22, 1)
+        >>> router.cmd('/system identity print')
+        'name: MikroTik'
+    """
+
     def __init__(
         self,
         host: str,
