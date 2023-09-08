@@ -10,44 +10,52 @@ def test_routeros_cmd():
     assert router.cmd('/system identity print') == 'name: test'
 
 
-def test_routeros_system_get_time():
-    assert match(r'\d{2}:\d{2}:\d{2}', router.get_time())
+def test_clock_time_get():
+    assert match(r'\d{2}:\d{2}:\d{2}', router.clock_time_get())
 
 
-def test_routeros_system_get_date():
-    assert match(r'\d{4}-\d{2}-\d{2}', router.get_date())
+def test_clock_date_get():
+    assert match(r'\d{4}-\d{2}-\d{2}', router.clock_date_get())
 
 
-def test_get_time_zone():
-    assert router.get_time_zone() == 'America/Cuiaba'
+def test_clock_time_zone_get():
+    assert router.clock_time_zone_get() == 'America/Cuiaba'
 
 
-def test_routeros_system_get_gmt_offset():
-    assert router.get_gmt_offset() == '-04:00'
+def test_clock_gmt_offset_get():
+    assert router.clock_gmt_offset_get() == '-04:00'
 
 
-def test_routeros_system_get_voltage():
-    assert 20 < router.voltage() < 30
+def test_clock_dst_active_get():
+    assert isinstance(router.clock_dst_active_get(), bool)
 
 
-def test_routeros_system_get_temperature():
-    assert isinstance(router.temperature(), float)
+def test_clock_time_zone_autodetect_get():
+    assert isinstance(router.clock_time_zone_autodetect_get(), bool)
 
 
-def test_routeros_system_get_history_system():
-    assert isinstance(router.get_history_system(), str)
+def test_health_voltage():
+    assert 20 < router.health_voltage() < 30
 
 
-def test_routeros_system_get_identity():
+def test_health_temperature():
+    assert isinstance(router.health_temperature(), float)
+
+
+def test_history_system_get():
+    assert isinstance(router.history_system_get(), str)
+
+
+def test_identity():
     assert router.identity == 'test'
 
 
-def test_routeros_system_get_identity_fail():
+def test_identity_fail():
     assert router.identity != 'test_fail'
 
 
-def test_routeros_system_get_ntp_client():
-    ntp_client_output = router.get_ntp_client()
+def test_ntp_client_get():
+    ntp_client_output = router.ntp_client_get()
     assert isinstance(ntp_client_output['enabled'], bool)
     for server in ntp_client_output['servers']:
         assert validate_ip(server)
