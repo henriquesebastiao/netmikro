@@ -1,7 +1,9 @@
-from netmikro import RouterOS
 from re import match
 
-router = RouterOS('192.168.3.3', 'test', 'test', 22)
+from netmikro import RouterOS
+from netmikro.modules import validate_ip
+
+router = RouterOS('192.168.3.3', 'test', 'test', 22, 1)
 
 
 def test_routeros_cmd():
@@ -42,3 +44,11 @@ def test_routeros_system_get_identity():
 
 def test_routeros_system_get_identity_fail():
     assert router.identity != 'test_fail'
+
+
+def test_routeros_system_get_ntp_client():
+    ntp_client_output = router.get_ntp_client()
+    assert isinstance(ntp_client_output['enabled'], bool)
+    for server in ntp_client_output['servers']:
+        assert validate_ip(server)
+    assert ntp_client_output['vrf'] == 'main'

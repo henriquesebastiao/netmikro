@@ -36,11 +36,12 @@ line_length = 79
 
 [tool.ruff]
 line-length = 79
+exclude = ["netmikro/__init__.py"]
 
 [tool.taskipy.tasks]
 lint = "ruff . && blue --check --diff . && isort --check --diff ."
 format = 'blue .  && isort .'
 docs = "mkdocs serve"
 pre_test = "task lint"
-test = "pytest -s -x --cov=notas_musicais -vv"
+test = "pytest -s -x --cov=netmikro -vv"
 post_test = "coverage html"
