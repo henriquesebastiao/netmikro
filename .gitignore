@@ -180,5 +180,8 @@ pyrightconfig.json
 ## PyCharm ##
 .idea
 
+## VSCode ##
+.vscode
+
 ## Developer ##
 my_tests.py

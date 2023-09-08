@@ -1,0 +1,20 @@
+site_name: Netmikro
+repo_url: https://github.com/henriquesebastiao/netmikro
+repo_name: henriquesebastiao/netmikro
+edit_uri: tree/main/docs
+
+theme:
+  name: material
+  language: en
+
+markdown_extensions:
+  - attr_list
+
+#extra_css:
+#	- stylesheets/extra.css
+
+plugins:
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [netmikro]
