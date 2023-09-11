@@ -1,9 +1,9 @@
-[![Status](https://img.shields.io/badge/Status-development-red)](https://github.com/henriquesebastiao/netmikro)
-[![LICENSE](https://img.shields.io/github/license/henriquesebastiao/netmikro)](https://github.com/henriquesebastiao/netmikro/blob/main/LICENSE)
-
 <img src="docs/assets/netmikro.svg" width="150">
 
 # Netmikro
+
+[![Status](https://img.shields.io/badge/Status-development-red)](https://github.com/henriquesebastiao/netmikro)
+[![LICENSE](https://img.shields.io/github/license/henriquesebastiao/netmikro)](https://github.com/henriquesebastiao/netmikro/blob/main/LICENSE)
 
 Library to simplify MikroTik device configurations.
 
