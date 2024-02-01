@@ -37,7 +37,6 @@ theme:
     - search.suggest
     - search.share
     - announce.dismiss
-    - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.progress
     - navigation.tracking
