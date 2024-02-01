@@ -1,26 +1,49 @@
-<img src="docs/assets/netmikro.svg" width="150">
+<img src="docs/assets/netmikro.svg" width="100">
 
 # Netmikro
 
-[![Status](https://img.shields.io/badge/Status-development-red)](https://github.com/henriquesebastiao/netmikro)
-[![LICENSE](https://img.shields.io/github/license/henriquesebastiao/netmikro)](https://github.com/henriquesebastiao/netmikro/blob/main/LICENSE)
+Netmikro is a simple library that provides an easy way to manage Mikrotik routers, simplifying configuration and monitoring tasks.
 
-Library to simplify MikroTik device configurations.
+Everything works through an instance of the RouterOS class that creates an SSH connection with the device, think of the instantiated object as your own router, this object has [methods](api/RouterOS.md) to interact with your router, or you can Run custom commands directly in your router's terminal with the `cmd()` method.
 
-## Use
+Netmikro is on the shoulders of the [Netmiko](https://github.com/ktbyers/netmiko) project, responsible for creating a connection via SSH with the Mikrotik router.
 
-```python
+> 📝 **Note:** I'm just a computer networking enthusiast and have experience with handling MIkrotik routers. All Netmikro features are being tested during development with a Mikrotik RB912UAG-5HPn router. The idea is to test it on other models as soon as possible.
+
+---
+
+**Documentation**: [https://netmikro.henriquesebastiao.com](https://netmikro.henriquesebastiao.com)
+
+**Source Code**: [https://github.com/henriquesebastiao/netmikro](https://github.com/henriquesebastiao/netmikro)
+
+---
+
+## How to install
+
+Netmikro is available on PyPi, so just use your preferred package manager:
+
+``` {.bash .copy }
+pip install netmikro
+```
+
+## Basic usage
+
+You just need to create an instance of RouterOS to use Netmikro features:
+
+```Python
 from netmikro import RouterOS
 
+
 router = RouterOS(
-    host='192.168.88.1',
-    username='admin',
-    password='admin',
-    port=22,
-    delay=0.5,
+    '192.168.3.3',
+    'user',
+    'password',
+    22,
 )
+
+router.cmd('/system identity print')
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the terms of the [MIT license](LICENSE).

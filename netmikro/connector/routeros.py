@@ -1,43 +1,29 @@
-from netmiko import ConnectHandler
+from time import sleep
+from datetime import date, time
+from typing import Dict, List, Optional, Union
+
+from netmiko.mikrotik.mikrotik_ssh import MikrotikRouterOsSSH
 
 from netmikro.modules import validate_ip
 
+from .._utils import convert
 
+
+# noinspection PyUnresolvedReferences
 class RouterOS:
     """
     Class that generates the connection with a MikroTik router.
 
-    Attributes:
-        host (str): IP address of the router you want to connect to.
-        username (str): Username to be used in the connection.
-        password (str): Password to be used in the connection.
-        ssh_port (int): Router's SSH port.
-
     Examples:
-        >>> from netmikro import RouterOS # doctest: +SKIP
-        >>> router = RouterOS( # doctest: +SKIP
+        >>> from netmikro import RouterOS
+        >>> router = RouterOS(
         ...     '192.168.3.3',
-        ...     'test',
-        ...     'test',
+        ...     'user',
+        ...     'password',
         ...     22,
-        ...     1
         ... )
-        >>> router.cmd('/system identity print') # doctest: +SKIP
-        'name: test'
-
-    Todo:
-        # To implement:
-
-        ## System
-        * backup
-        * console
-        * default-configuration
-        * device-mode
-        * leds
-        * license
-        * logging
-        * package
-        ...
+        >>> router.cmd('/system identity print')
+        'name: Netmikro'
     """
 
     def __init__(
@@ -63,7 +49,7 @@ class RouterOS:
         self.password = password
         self.ssh_port = ssh_port
         self.delay = delay
-        self.auth = {
+        _auth = {
             'device_type': 'mikrotik_routeros',
             'host': host,
             'username': username,
@@ -71,12 +57,28 @@ class RouterOS:
             'port': ssh_port,
             'global_delay_factor': delay,
         }
-        self.connection = ConnectHandler(**self.auth)
-        self.identity = self.connection.send_command(
-            '/system identity print'
-        ).split(': ')[1]
-        self.note = self.cmd('/system note print').split(': ')[2]
-        self.model = self.cmd('return [/system/routerboard/get model]')
+        self._connection = MikrotikRouterOsSSH(**_auth)
+        self.identity = self._get('/system/identity/get name')
+        self.note = self._get('/system/note/get note')
+        self.model = self._get('/system/routerboard/get model')
+
+    def __str__(self):
+        return self.identity
+
+    def _get(self, command: str) -> Optional[str]:
+        output = self.cmd(f'return [{command}]')
+        if output == '':
+            return None
+        return output
+
+    def disconnect(self):
+        """
+        Disconnects the router's connection.
+
+        Examples:
+            >>> router.disconnect()
+        """
+        return self._connection.disconnect()
 
     def cmd(self, command: str) -> str:
         """
@@ -89,60 +91,61 @@ class RouterOS:
             Output of the command
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.cmd('/system identity print') # doctest: +SKIP
-            'name: test'
+            >>> router.cmd('/system identity print')
+            'name: Netmikro'
         """
-        return self.connection.send_command(command, delay_factor=self.delay)
+        return self._connection.send_command(command)
 
-    def clock_time_get(self) -> str:
+    def cmd_multiline(self, commands: List[str]):
+        """
+        Runs multiple commands in the router's terminal.
+
+        Parameters
+            commands: List of commands to be executed
+
+        Returns:
+            Output of the commands
+
+        Examples:
+            >>> router.cmd_multiline([
+            ...     '/system identity print',
+            ...     '/system note print'
+            ... ])
+            ['name: Netmikro', 'note: Test']
+        """
+        return self._connection.send_multiline(commands)
+
+    def clock_time_get(self) -> time:
         """
         Returns the router's system time.
 
         Returns:
-            Time in the format HH:MM:SS
+            Time with time zone, an instance of the `time` class.
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.clock_time_get() # doctest: +SKIP
-            '15:30:00' # doctest: +SKIP
+            >>> router.clock_time_get()
+            datetime.time(5, 41, 24)
+            >>> router.clock_time_get().isoformat()
+            '15:30:00'
         """
-        return self.cmd('return [/system clock get time]')
+        clock_time = self._get('/system clock get time').split(':')
+        return time(*[int(i) for i in clock_time])
 
-    def clock_date_get(self) -> str:
+    def clock_date_get(self) -> date:
         """
         Returns the router's system date.
 
         Returns:
-            Date in the format YYYY-MM-DD
+            An instance of the `date` class.
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.clock_date_get() # doctest: +SKIP
+            >>> router.clock_date_get()
+            datetime.date(2020, 12, 31)
+            >>> router.clock_date_get().isoformat()
             '2020-12-31'
         """
-        return self.cmd('return [/system clock get date]')
+        clock_date = self._get('/system clock get date').split('-')
+        return date(*[int(i) for i in clock_date])
 
     def clock_time_zone_get(self) -> str:
         """
@@ -152,18 +155,10 @@ class RouterOS:
             Time zone in the format Continent/City
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.clock_time_zone_get() # doctest: +SKIP
+            >>> router.clock_time_zone_get()
             'America/Cuiaba'
         """
-        return self.cmd('return [/system clock get time-zone-name]')
+        return self._get('/system clock get time-zone-name')
 
     def clock_gmt_offset_get(self) -> str:
         """
@@ -173,34 +168,21 @@ class RouterOS:
             GMT offset in the format +/-HH:MM
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.clock_gmt_offset_get() # doctest: +SKIP
+            >>> router.clock_gmt_offset_get()
             '-04:00'
         """
-        output = self.connection.send_command('/system clock print')
-        output = output.split(': ')[5]
-        return output.split('\n')[0]
+        return self._get('/system/clock/get gmt-offset as-string')
 
-    def clock_dst_active_get(self) -> bool:
+    def clock_dst_active_get(self) -> Optional[bool]:
         """
         Returns True if DST is enabled, if not enabled, returns False.
 
         Returns:
             True if DST is enabled, if not enabled, returns False.
         """
-        if self.cmd('return [/system clock get dst-active]') == 'false':
-            return False
-        else:
-            return True
+        return convert(self._get('/system clock get dst-active'))
 
-    def clock_time_zone_autodetect_get(self) -> bool:
+    def clock_time_zone_autodetect_get(self) -> Optional[bool]:
         """
         Returns True if time-zone-autodetect is enabled,
         if not enabled, it returns False.
@@ -209,13 +191,7 @@ class RouterOS:
             True if time-zone-autodetect is enabled,
             if not enabled, returns False.
         """
-        if (
-            self.cmd('return [/system clock get time-zone-autodetect]')
-            == 'false'
-        ):
-            return False
-        else:
-            return True
+        return convert(self._get('/system clock get time-zone-autodetect'))
 
     def health_voltage(self) -> float:
         """
@@ -225,21 +201,11 @@ class RouterOS:
             Voltage in Volts
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.health_voltage() # doctest: +SKIP
+            >>> router.health_voltage()
             24.0
         """
-        output = self.connection.send_command('/system health print')
-        output = output.split(' ')
-        output = [i for i in output if i != '']
-        return float(output[8])
+        output = self._get('/system/health/get number=0 value')
+        return float(output)
 
     def health_temperature(self) -> float:
         """
@@ -249,21 +215,11 @@ class RouterOS:
             Temperature in Celsius
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.health_temperature() # doctest: +SKIP
+            >>> router.health_temperature()
             40.0
         """
-        output = self.connection.send_command('/system health print')
-        output = output.split(' ')
-        output = [i for i in output if i != '']
-        return float(output[12])
+        output = self._get('/system/health/get number=1 value')
+        return float(output)
 
     def history_system_get(self) -> str:
         """
@@ -274,15 +230,7 @@ class RouterOS:
             History of changes made to the router's system settings
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.history_system_get() # doctest: +SKIP
+            >>> router.history_system_get()
             Flags: U - UNDOABLE
             Columns: ACTION, BY, POLICY
               ACTION                        BY    POLICY
@@ -290,11 +238,8 @@ class RouterOS:
             U changed system note settings  hick  write
             U changed system note settings  hick  write
             U ip service changed            hick  write
-
-        Todo:
-            * Improve the way this information is returned to the user.
         """
-        output = self.connection.send_command('/system history print')
+        output = self.cmd('/system history print')
         return output
 
     def identity_set(self, new_identity: str):
@@ -305,20 +250,13 @@ class RouterOS:
             new_identity: New identity to be set
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.identity_set('new_identity') # doctest: +SKIP
+            >>> router.identity_set('new_identity')
         """
         new_identity.strip()
-        self.connection.send_command(
-            f'/system identity set name={new_identity}'
-        )
+        self.cmd(f'/system identity set name={new_identity}')
+        sleep(2)
+        self.identity = new_identity
+        return self.identity
 
     def note_set(self, note: str, show_at_login: bool = False):
         """
@@ -330,22 +268,14 @@ class RouterOS:
                 displayed every time a user logs into the router.
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.note_set('new_note', True) # doctest: +SKIP
+            >>> router.note_set('new_note', True)
         """
         show_at_login = 'yes' if show_at_login else 'no'
-        self.connection.send_command(
+        self.cmd(
             f'/system note set note="{note}" show-at-login={show_at_login}'
         )
 
-    def ntp_client_get(self) -> dict:
+    def ntp_client_get(self) -> Dict[str, Union[bool, str, int, List[str]]]:
         """
         Returns the NTP client configuration.
 
@@ -353,18 +283,10 @@ class RouterOS:
             Dictionary with the NTP client configuration
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.ntp_client_get() # doctest: +SKIP
+            >>> router.ntp_client_get()
             {
                 'enabled': True,
-                 'freq-diff': 3.082,
+                 'freq-diff': '3.082 PPM',
                  'mode': 'unicast',
                  'servers': ['200.160.7.186', '201.49.148.135'],
                  'status': 'synchronized',
@@ -374,39 +296,25 @@ class RouterOS:
                  'vrf': 'main'
             }
         """
-        ntp_client = self.connection.send_command(
-            '/system ntp client print'
-        ).split(': ')
-        enabled = ntp_client[1].split('\n')[0]
 
-        if enabled == 'yes':
-            enabled = True
-        else:
-            enabled = False
+        ntp_command = '/system ntp client get'
+        servers = self._get(f'{ntp_command} servers').split(';')
 
-        mode = ntp_client[2].split('\n')[0]
-        servers = ntp_client[3].split('\n')[0].split(',')
-        vrf = ntp_client[4].split('\n')[0]
-        freq_diff = float(ntp_client[5].split('\n')[0].split(' ')[0])
-        status = ntp_client[6].split('\n')[0]
-        synced_server = ntp_client[7].split('\n')[0]
-        synced_stratum = int(ntp_client[8].split('\n')[0][0])
-        system_offset = float(ntp_client[9].split('\n')[0].split(' ')[0])
         return {
-            'enabled': enabled,
-            'mode': mode,
+            'enabled': convert(self._get(f'{ntp_command} enabled')),
+            'mode': self._get(f'{ntp_command} mode'),
             'servers': servers,
-            'vrf': vrf,
-            'freq-diff': freq_diff,
-            'status': status,
-            'synced-server': synced_server,
-            'synced-stratum': synced_stratum,
-            'system-offset': system_offset,
+            'vrf': self._get(f'{ntp_command} vrf'),
+            'freq-dift': self._get(f'{ntp_command} freq-drift as-string'),
+            'status': self._get(f'{ntp_command} status'),
+            'synced-server': self._get(f'{ntp_command} synced-server'),
+            'synced-stratum': int(self._get(f'{ntp_command} synced-stratum')),
+            'system-offset': self._get(f'{ntp_command} system-offset as-string')
         }
 
     def ntp_client_set(
         self,
-        servers: str,
+        servers: List[str],
         enabled: bool = True,
         mode: str = 'unicast',
         vrf: str = 'main',
@@ -421,40 +329,33 @@ class RouterOS:
             vrf: Specifies the VRF to be used by the NTP client
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.ntp_client_set( # doctest: +SKIP
+            >>> router.ntp_client_set(
                 '200.160.7.186, 201.49.148.135',
                 True,
                 'unicast',
                 'main'
             )
         """
-        servers = servers.replace(' ', '')
-        servers_validate = servers.split(',')
-        for ip_server in servers_validate:
+
+        for ip_server in servers:
             if not validate_ip(ip_server):
                 raise ValueError(f'Invalid IP: {ip_server}')
+        servers = ','.join(servers)
+
         enabled = 'yes' if enabled else 'no'
         mode = mode.lower().strip()
         if mode not in ['unicast', 'broadcast', 'multicast', 'manycast']:
             raise ValueError(f'Invalid mode: {mode}')
         vrf = vrf.lower().strip()
 
-        self.connection.send_command(
+        self.cmd(
             f'/system ntp client set '
             f'enabled={enabled} mode={mode} servers={servers} vrf={vrf}'
         )
 
         return None
 
-    def ntp_server_get(self) -> dict:
+    def ntp_server_get(self) -> dict[str, Union[bool, str, None]]:
         """
         Returns the NTP server configuration.
 
@@ -462,15 +363,7 @@ class RouterOS:
             Dictionary with the NTP server configuration
 
         Examples:
-            >>> from netmikro import RouterOS # doctest: +SKIP
-            >>> router = RouterOS( # doctest: +SKIP
-            ...     '192.168.3.3',
-            ...     'test',
-            ...     'test',
-            ...     22,
-            ...     1
-            ... )
-            >>> router.ntp_server_get() # doctest: +SKIP
+            >>> router.ntp_server_get()
             {
                 'broadcast': False,
                 'broadcast-address': None,
@@ -479,53 +372,13 @@ class RouterOS:
                 'multicast': False,
                 'vrf': 'main'
             }
-
-        Todo:
-            * Provide an example of a real case with a configured NTP server.
         """
-        ntp_server = self.connection.send_command(
-            '/system ntp server print'
-        ).split(': ')
-        enabled = ntp_server[1].split('\n')[0]
-
-        if enabled == 'yes':
-            enabled = True
-        else:
-            enabled = False
-
-        broadcast = ntp_server[2].split('\n')[0]
-
-        if broadcast == 'yes':
-            broadcast = True
-        else:
-            broadcast = False
-
-        multicast = ntp_server[3].split('\n')[0]
-
-        if multicast == 'yes':
-            multicast = True
-        else:
-            multicast = False
-
-        manycast = ntp_server[4].split('\n')[0]
-
-        if manycast == 'yes':
-            manycast = True
-        else:
-            manycast = False
-
-        broadcast_address = ntp_server[5].split('\n')[0]
-
-        if broadcast_address == '':
-            broadcast_address = None
-
-        vrf = ntp_server[6].split('\n')[0]
-
+        ntp_command = '/system ntp server get'
         return {
-            'enabled': enabled,
-            'broadcast': broadcast,
-            'multicast': multicast,
-            'manycast': manycast,
-            'broadcast-address': broadcast_address,
-            'vrf': vrf,
+            'enabled': convert(self._get(f'{ntp_command} enabled')),
+            'broadcast': convert(self._get(f'{ntp_command} broadcast')),
+            'multicast': convert(self._get(f'{ntp_command} multicast')),
+            'manycast': convert(self._get(f'{ntp_command} manycast')),
+            'broadcast-address': self._get(f'{ntp_command} broadcast-address'),
+            'vrf': self._get(f'{ntp_command} vrf'),
         }
