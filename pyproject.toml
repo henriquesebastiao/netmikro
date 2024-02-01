@@ -1,9 +1,29 @@
 [tool.poetry]
 name = "netmikro"
 version = "0.1.0"
-description = ""
-authors = ["Henrique Sebastião <henriquesebastiao.web@gmail.com>"]
+description = "Netmikro is a simple library that provides an easy way to manage Mikrotik routers, simplifying configuration and monitoring tasks."
+authors = ["Henrique Sebastião <contato@henriquesebastiao.com>"]
 readme = "README.md"
+packages = [{include = "netmikro"}]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: System :: Networking :: Firewalls",
+    "Topic :: System :: Networking",
+    "Topic :: System :: Networking :: Monitoring :: Hardware Watchdog",
+    "Topic :: Utilities",
+]
+
+[tool.poetry.urls]
+"Documentation" = "https://netmikro.henriquesebastiao.com"
+"Homepage" = "https://netmikro.henriquesebastiao.com"
+"Repository" = "https://github.com/henriquesebastiao/netmikro"
+"Bug Tracker" = "https://github.com/henriquesebastiao/netmikro/issues"
 
 [tool.poetry.dependencies]
 python = "^3.11"
