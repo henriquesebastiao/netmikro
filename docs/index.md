@@ -1,6 +1,10 @@
 ![logo do projeto](assets/netmikro.svg){ width="100"}
 # Netmikro
 
+[![CI](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml/badge.svg)](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml)
+[![Documentation Status](https://readthedocs.org/projects/netmikro/badge/?version=latest)](https://netmikro.henriquesebastiao.com/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/netmikro.svg)](https://badge.fury.io/py/netmikro)
+
 Netmikro is a simple library that provides an easy way to manage Mikrotik routers, simplifying configuration and monitoring tasks.
 
 Everything works through an instance of the RouterOS class that creates an SSH connection with the device, think of the instantiated object as your own router, this object has [methods](api/RouterOS.md) to interact with your router, or you can Run custom commands directly in your router's terminal with the `cmd()` method.
