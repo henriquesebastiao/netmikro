@@ -1,4 +1,3 @@
-from time import sleep
 from datetime import date, time
 from typing import Dict, List, Optional, Union
 
@@ -254,9 +253,7 @@ class RouterOS:
         """
         new_identity.strip()
         self.cmd(f'/system identity set name={new_identity}')
-        sleep(2)
         self.identity = new_identity
-        return self.identity
 
     def note_set(self, note: str, show_at_login: bool = False):
         """
@@ -309,7 +306,9 @@ class RouterOS:
             'status': self._get(f'{ntp_command} status'),
             'synced-server': self._get(f'{ntp_command} synced-server'),
             'synced-stratum': int(self._get(f'{ntp_command} synced-stratum')),
-            'system-offset': self._get(f'{ntp_command} system-offset as-string')
+            'system-offset': self._get(
+                f'{ntp_command} system-offset as-string'
+            ),
         }
 
     def ntp_client_set(
