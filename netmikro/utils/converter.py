@@ -1,4 +1,4 @@
-def convert(string: str) -> bool or None or str:
+def boolean(string: str) -> bool or None or str:
     string = string.strip()
     if string == 'true':
         return True

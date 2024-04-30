@@ -1,119 +1,12 @@
 from datetime import date, time
 from typing import Dict, List, Optional, Union
 
-from netmiko.mikrotik.mikrotik_ssh import MikrotikRouterOsSSH
-
-from netmikro.modules import validate_ip
-
-from .._utils import convert
+from netmikro.modules.base import Base
+from netmikro.utils import boolean, validate_ip
 
 
 # noinspection PyUnresolvedReferences
-class RouterOS:
-    """
-    Class that generates the connection with a MikroTik router.
-
-    Examples:
-        >>> from netmikro import RouterOS
-        >>> router = RouterOS(
-        ...     '192.168.3.3',
-        ...     'user',
-        ...     'password',
-        ...     22,
-        ... )
-        >>> router.cmd('/system identity print')
-        'name: Netmikro'
-    """
-
-    def __init__(
-        self,
-        host: str,
-        username: str,
-        password: str,
-        ssh_port: int = 22,
-        delay: float = 0,
-    ):
-        """
-        Class that generates the connection with a MikroTik router.
-
-        Parameters:
-            host (str): IP address of the router you want to connect to.
-            username (str): Username to be used in the connection.
-            password (str): Password to be used in the connection.
-            ssh_port (int): SSH port to be used in the connection.
-            delay (float): Time delay between command executions on the router.
-        """
-        self.host = host
-        self.username = username
-        self.password = password
-        self.ssh_port = ssh_port
-        self.delay = delay
-        _auth = {
-            'device_type': 'mikrotik_routeros',
-            'host': host,
-            'username': username,
-            'password': password,
-            'port': ssh_port,
-            'global_delay_factor': delay,
-        }
-        self._connection = MikrotikRouterOsSSH(**_auth)
-        self.identity = self._get('/system/identity/get name')
-        self.note = self._get('/system/note/get note')
-        self.model = self._get('/system/routerboard/get model')
-
-    def __str__(self):
-        return self.identity
-
-    def _get(self, command: str) -> Optional[str]:
-        output = self.cmd(f'return [{command}]')
-        if output == '':
-            return None
-        return output
-
-    def disconnect(self):
-        """
-        Disconnects the router's connection.
-
-        Examples:
-            >>> router.disconnect()
-        """
-        return self._connection.disconnect()
-
-    def cmd(self, command: str) -> str:
-        """
-        Runs a command in the router's terminal.
-
-        Parameters:
-            command: Command to be executed
-
-        Returns:
-            Output of the command
-
-        Examples:
-            >>> router.cmd('/system identity print')
-            'name: Netmikro'
-        """
-        return self._connection.send_command(command)
-
-    def cmd_multiline(self, commands: List[str]):
-        """
-        Runs multiple commands in the router's terminal.
-
-        Parameters
-            commands: List of commands to be executed
-
-        Returns:
-            Output of the commands
-
-        Examples:
-            >>> router.cmd_multiline([
-            ...     '/system identity print',
-            ...     '/system note print'
-            ... ])
-            ['name: Netmikro', 'note: Test']
-        """
-        return self._connection.send_multiline(commands)
-
+class System(Base):
     def clock_time_get(self) -> time:
         """
         Returns the router's system time.
@@ -170,7 +63,7 @@ class RouterOS:
             >>> router.clock_gmt_offset_get()
             '-04:00'
         """
-        return self._get('/system/clock/get gmt-offset as-string')
+        return self._get('/system clock get gmt-offset as-string')
 
     def clock_dst_active_get(self) -> Optional[bool]:
         """
@@ -179,7 +72,7 @@ class RouterOS:
         Returns:
             True if DST is enabled, if not enabled, returns False.
         """
-        return convert(self._get('/system clock get dst-active'))
+        return boolean(self._get('/system clock get dst-active'))
 
     def clock_time_zone_autodetect_get(self) -> Optional[bool]:
         """
@@ -190,7 +83,7 @@ class RouterOS:
             True if time-zone-autodetect is enabled,
             if not enabled, returns False.
         """
-        return convert(self._get('/system clock get time-zone-autodetect'))
+        return boolean(self._get('/system clock get time-zone-autodetect'))
 
     def health_voltage(self) -> float:
         """
@@ -203,7 +96,7 @@ class RouterOS:
             >>> router.health_voltage()
             24.0
         """
-        output = self._get('/system/health/get number=0 value')
+        output = self._get('/system health get number=0 value')
         return float(output)
 
     def health_temperature(self) -> float:
@@ -217,7 +110,7 @@ class RouterOS:
             >>> router.health_temperature()
             40.0
         """
-        output = self._get('/system/health/get number=1 value')
+        output = self._get('/system health get number=1 value')
         return float(output)
 
     def history_system_get(self) -> str:
@@ -298,7 +191,7 @@ class RouterOS:
         servers = self._get(f'{ntp_command} servers').split(';')
 
         return {
-            'enabled': convert(self._get(f'{ntp_command} enabled')),
+            'enabled': boolean(self._get(f'{ntp_command} enabled')),
             'mode': self._get(f'{ntp_command} mode'),
             'servers': servers,
             'vrf': self._get(f'{ntp_command} vrf'),
@@ -374,10 +267,10 @@ class RouterOS:
         """
         ntp_command = '/system ntp server get'
         return {
-            'enabled': convert(self._get(f'{ntp_command} enabled')),
-            'broadcast': convert(self._get(f'{ntp_command} broadcast')),
-            'multicast': convert(self._get(f'{ntp_command} multicast')),
-            'manycast': convert(self._get(f'{ntp_command} manycast')),
+            'enabled': boolean(self._get(f'{ntp_command} enabled')),
+            'broadcast': boolean(self._get(f'{ntp_command} broadcast')),
+            'multicast': boolean(self._get(f'{ntp_command} multicast')),
+            'manycast': boolean(self._get(f'{ntp_command} manycast')),
             'broadcast-address': self._get(f'{ntp_command} broadcast-address'),
             'vrf': self._get(f'{ntp_command} vrf'),
         }

@@ -1,17 +1,20 @@
 import os
 
+from dotenv import load_dotenv
 from pytest import fixture
 
-from netmikro.connector.routeros import RouterOS
+from netmikro.routeros import RouterOS
+
+load_dotenv()
 
 
 @fixture(scope='session')
 def router():
     """Fixture to create a RouterOS connection to be used in tests."""
     connection = RouterOS(
-        host=os.getenv('HOST'),
-        username=os.getenv('USERNAME'),
-        password=os.getenv('PASSWORD'),
+        host=os.getenv('HOST_ROUTER'),
+        username=os.getenv('USERNAME_ROUTER'),
+        password=os.getenv('PASSWORD_ROUTER'),
         ssh_port=int(os.getenv('SSH_PORT')),
         delay=1,
     )

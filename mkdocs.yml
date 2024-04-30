@@ -12,8 +12,8 @@ nav:
 
 theme:
   name: material
-  logo: assets/netmikro.svg
-  favicon: assets/netmikro.svg
+  logo: assets/netmikro.png
+  favicon: assets/netmikro.png
   font:
     text: Roboto
     code: Source Code Pro

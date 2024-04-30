@@ -26,8 +26,9 @@ classifiers = [
 "Bug Tracker" = "https://github.com/henriquesebastiao/netmikro/issues"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.11.9"
 netmiko = "^4.2.0"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.1"

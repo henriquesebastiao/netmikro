@@ -1,7 +1,7 @@
 from datetime import date, time
 from re import match
 
-from netmikro.modules import validate_ip
+from netmikro.utils import validate_ip
 
 from ._utils import router
 

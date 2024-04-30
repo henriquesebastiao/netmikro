@@ -1,4 +1,4 @@
-![logo do projeto](assets/netmikro.svg){ width="100"}
+![logo do projeto](assets/netmikro.png){ width="100"}
 # Netmikro
 
 [![CI](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml/badge.svg)](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml)

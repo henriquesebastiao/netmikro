@@ -1,1 +1,1 @@
-from .connector.routeros import RouterOS
+from netmikro.routeros import RouterOS
