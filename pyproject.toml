@@ -59,7 +59,7 @@ pythonpath = "."
 python_files = "test.py tests.py test_*.py tests_*.py *_test.py *_tests.py"
 
 [tool.coverage.run]
-omit = ["_utils.py", "hand.py"]
+omit = ["_utils.py"]
 
 [tool.isort]
 profile = "black"
@@ -67,15 +67,14 @@ line_length = 79
 
 [tool.ruff]
 line-length = 79
-exclude = ["netmikro/__init__.py"]
-tab-size = 4
+indent-width = 4
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F403", "F401"]
 "tests/*" = ["F401", "F811"]
-"__init__.py" = ["F401"]
 
 [tool.taskipy.tasks]
-lint = "ruff . && blue --check --diff . && isort --check --diff ."
+lint = "ruff check . && blue --check --diff . && isort --check --diff ."
 format = 'blue .  && isort .'
 docs = "mkdocs serve"
 pre_test = "task lint"
