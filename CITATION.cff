@@ -1,0 +1,28 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Netmikro
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Henrique Sebastião
+    family-names: da Silva Rosa
+    email: contato@henriquesebastiao.com
+repository-code: 'https://github.com/henriquesebastiao/netmikro'
+url: 'https://netmikro.henriquesebastiao.com'
+abstract: >-
+  Netmikro is a simple library that provides an easy way to
+  manage Mikrotik routers, simplifying configuration and
+  monitoring tasks.
+keywords:
+  - netmikro
+  - netmiko
+  - paramiko
+  - mikrotik
+license: MIT
+commit: 0397196
+version: 0.1.0
+date-released: '2024-02-01'
