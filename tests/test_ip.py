@@ -1,5 +1,6 @@
 import os
 
+import pytest
 from dotenv import load_dotenv
 
 from ._utils import router
@@ -7,37 +8,66 @@ from ._utils import router
 load_dotenv()
 
 
-def test_api_port_number(router):
-    assert router.cmd('return [/ip service get api port]') == '8728'
-
-
-def test_api_ssl_port_number(router):
-    assert router.cmd('return [/ip service get api-ssl port]') == '8729'
-
-
-def test_ftp_port_number(router):
-    assert router.cmd('return [/ip service get ftp port]') == '21'
-
-
-def test_ssh_port_number(router):
-    assert router.cmd('return [/ip service get ssh port]') == os.getenv(
-        'SSH_PORT'
+@pytest.mark.parametrize(
+    'service,default_port',
+    [
+        ('api', 8728),
+        ('api-ssl', 8729),
+        ('ftp', 21),
+        ('telnet', 23),
+        ('www', 80),
+        ('www-ssl', 443),
+    ],
+)
+def test_ip_port_get_command(router, service, default_port):
+    assert router.cmd(f'return [/ip service get {service} port]') == str(
+        default_port
     )
 
 
-def test_telnet_port_number(router):
-    assert router.cmd('return [/ip service get telnet port]') == '23'
+@pytest.mark.parametrize(
+    'service,default_port',
+    [
+        ('api', 8728),
+        ('api-ssl', 8729),
+        ('ftp', 21),
+        ('telnet', 23),
+        ('www', 80),
+        ('www-ssl', 443),
+    ],
+)
+def test_ip_port_get(router, service, default_port):
+    assert router.service[service].port == default_port
 
 
-def test_winbox_port_number(router):
-    assert router.cmd('return [/ip service get winbox port]') == os.getenv(
-        'WINBOX_PORT'
-    )
+@pytest.mark.parametrize(
+    'service,default_port',
+    [
+        ('api', 8728),
+        ('api-ssl', 8729),
+        ('ftp', 21),
+        ('telnet', 23),
+        ('www', 80),
+        ('www-ssl', 443),
+    ],
+)
+def test_ip_port_set(router, service, default_port):
+    router.ip_port_set(service, 65000)
+    assert router.service[service].port == 65000
+    router.ip_port_set(service, default_port)
 
 
-def test_http_port_number(router):
-    assert router.cmd('return [/ip service get www port]') == '80'
-
-
-def test_https_port_number(router):
-    assert router.cmd('return [/ip service get www-ssl port]') == '443'
+@pytest.mark.parametrize(
+    'service',
+    [
+        'api',
+        'api-ssl',
+        'ftp',
+        'telnet',
+        'www',
+        'www-ssl',
+    ],
+)
+def test_ip_port_set_error(router, service):
+    with pytest.raises(ValueError, match='Invalid port'):
+        router.ip_port_set(service, 70000)
