@@ -88,14 +88,12 @@ plugins:
   - search
   - git-authors
   - git-committers:
-      repository: henriquesebastiao/skyport
+      repository: henriquesebastiao/netmikro
       branch: main
   - git-revision-date-localized:
       type: date
 
 extra:
-  commands:
-    run: skyport
   variables:
     version: 0.1.0
   social:

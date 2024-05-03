@@ -26,13 +26,11 @@ classifiers = [
 "Bug Tracker" = "https://github.com/henriquesebastiao/netmikro/issues"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 netmiko = "^4.2.0"
 python-dotenv = "^1.0.1"
-pytest = "^8.2.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = ">=7.4.1,<9.0.0"
 pytest-cov = ">=4.1,<6.0"
 blue = "^0.9.1"
 isort = "^5.12.0"
@@ -40,6 +38,7 @@ ruff = ">=0.0.287,<0.4.3"
 taskipy = "^1.12.0"
 coverage-badge = "^1.1.1"
 setuptools = "^69.5.1"
+pytest = "^8.2.0"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs-material = "^9.2.8"
