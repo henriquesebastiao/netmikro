@@ -86,5 +86,5 @@ format = 'blue .  && isort .'
 docs = "mkdocs serve"
 pre_test = "task lint"
 test = "pytest -s -x --cov=netmikro -vv"
-post_test = "coverage html && coverage-badge -o docs/assets/coverage.svg -f"
+post_test = "coverage html && coverage-badge -o docs/assets/coverage.svg -f && rm requirements.txt && poetry export -f requirements.txt --output requirements.txt --without-hashes"
 export-requirements = "rm requirements.txt && poetry export -f requirements.txt --output requirements.txt --without-hashes"
