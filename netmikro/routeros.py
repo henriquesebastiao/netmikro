@@ -30,7 +30,7 @@ class RouterOS(Ip, System):
     ):
         super().__init__(host, username, password, ssh_port, delay)
 
-    def cmd_multiline(self, commands: List[str]):
+    def cmd_multiline(self, commands: List[str]) -> str:
         """
         Runs multiple commands in the router's terminal.
 
@@ -38,7 +38,7 @@ class RouterOS(Ip, System):
             commands: List of commands to be executed
 
         Returns:
-            Output of the commands
+            str: Output of the commands
 
         Examples:
             >>> router.cmd_multiline([
@@ -48,9 +48,3 @@ class RouterOS(Ip, System):
             ['name: Netmikro', 'note: Test']
         """
         return self._connection.send_multiline(commands)
-
-    # IP methods
-
-    pass
-
-    # SYSTEM methods

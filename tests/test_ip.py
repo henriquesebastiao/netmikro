@@ -1,9 +1,7 @@
-import os
-
 import pytest
 from dotenv import load_dotenv
 
-from ._utils import router
+from tests._utils import router
 
 load_dotenv()
 

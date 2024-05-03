@@ -1,1 +1,1 @@
-::: connector.routeros
+::: routeros

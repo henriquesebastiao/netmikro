@@ -1,12 +1,92 @@
 from datetime import date, time
 from typing import Dict, List, Optional, Union
 
+from netmikro.exceptions import InvalidNtpMode
 from netmikro.modules.base import Base
-from netmikro.utils import boolean, validate_ip
+from netmikro.utils import IpAddress, boolean
 
 
 # noinspection PyUnresolvedReferences
 class System(Base):
+    def __init__(self, *args, **kwargs):
+        """
+        Gets system-related information from the router
+
+        Attributes:
+            identity: Name of the router (format: 'HS-A (192.168.88.1) on RB912UAG-5HPnD (mipsbe)')
+            routerboard: If the router is a RouterBoard, returns a dictionary with the following keys:
+                - model: RouterBoard model
+                - revision: Revision version
+                - serial-number: Serial number of the router
+            license: A dictionary with router license information, with the following keys:
+                - software-id: Software ID
+                - level: License level
+                - features: License features
+            note: Notes of about the router
+            resources: A dictionary with router hardware information, with the following keys:
+                - cpu: CPU model
+                - cpu-frequency: CPU frequency (MHz)
+                - memory: Total RAM (Bytes)
+                - storage: Total storage (Bytes)
+                - architecture: Router architecture
+                - board-name: Name of the board Routerboard
+                - version: Router version
+        """
+        super().__init__(*args, **kwargs)
+
+        self.identity = self._get('/system identity get name')
+
+        if self.is_routerboard():
+            self.routerboard: dict[str, str] = {
+                'model': self._get('/system routerboard get model'),
+                'revision': self._get('/system routerboard get revision'),
+                'serial-number': self._get(
+                    '/system routerboard get serial-number'
+                ),
+                'firmware-type': self._get(
+                    '/system routerboard get firmware-type'
+                ),
+                'factory-firmware': self._get(
+                    '/system routerboard get factory-firmware'
+                ),
+                'current-firmware': self._get(
+                    '/system routerboard get current-firmware'
+                ),
+                'upgrade-firmware': self._get(
+                    '/system routerboard get upgrade-firmware'
+                ),
+            }
+
+            self.license: dict[str, Union[str, None]] = {
+                'software-id': self._get('/system license get software-id'),
+                'level': self._get('/system license get nlevel'),
+                'features': self._get('/system license get features'),
+            }
+        else:
+            self.license: dict[str, Union[str, None]] = {
+                'system-id': self._get('/system license get system-id'),
+                'level': self._get('/system license get level'),
+            }
+
+        self.note = self._get('/system note get note')
+
+        self.resources: dict[str, Union[str | int]] = {
+            'cpu': self._get('/system resources get cpu'),
+            'cpu-frequency': int(
+                self._get('/system resource get cpu-frequency')
+            ),
+            'memory': int(self._get('/system resource get total-memory')),
+            'storage': int(self._get('/system resource get total-hdd-space')),
+            'architecture': self._get(
+                '/system resource get architecture-name'
+            ),
+            'board-name': self._get('/system resource get board-name'),
+            'version': self._get('/system resource get version'),
+        }
+
+    def __str__(self) -> str:
+        return f'{self.identity} ({self.host}) on {self.resources["board-name"]} ({self.resources["architecture"]})'
+
     def clock_time_get(self) -> time:
         """
         Returns the router's system time.
@@ -206,7 +286,7 @@ class System(Base):
 
     def ntp_client_set(
         self,
-        servers: List[str],
+        servers: List[IpAddress],
         enabled: bool = True,
         mode: str = 'unicast',
         vrf: str = 'main',
@@ -229,23 +309,18 @@ class System(Base):
             )
         """
 
-        for ip_server in servers:
-            if not validate_ip(ip_server):
-                raise ValueError(f'Invalid IP: {ip_server}')
-        servers = ','.join(servers)
+        servers: str = ','.join([str(server) for server in servers])
 
         enabled = 'yes' if enabled else 'no'
         mode = mode.lower().strip()
         if mode not in ['unicast', 'broadcast', 'multicast', 'manycast']:
-            raise ValueError(f'Invalid mode: {mode}')
+            raise InvalidNtpMode(f'Invalid mode: {mode}')
         vrf = vrf.lower().strip()
 
         self.cmd(
             f'/system ntp client set '
             f'enabled={enabled} mode={mode} servers={servers} vrf={vrf}'
         )
-
-        return None
 
     def ntp_server_get(self) -> dict[str, Union[bool, str, None]]:
         """
@@ -274,3 +349,9 @@ class System(Base):
             'broadcast-address': self._get(f'{ntp_command} broadcast-address'),
             'vrf': self._get(f'{ntp_command} vrf'),
         }
+
+    def is_routerboard(self) -> bool:
+        get_routerboard = self._get('/system routerboard get routerboard')
+        if get_routerboard != 'true':
+            return False
+        return True

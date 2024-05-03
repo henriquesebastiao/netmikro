@@ -2,6 +2,8 @@ from typing import Optional
 
 from netmiko.mikrotik.mikrotik_ssh import MikrotikRouterOsSSH
 
+from ..utils.common import IpAddress
+
 
 class Base:
     def __init__(
@@ -22,7 +24,7 @@ class Base:
             ssh_port (int): SSH port to be used in the connection.
             delay (float): Time delay between command executions on the router.
         """
-        self.host = host
+        self.host = IpAddress(host)
         self.username = username
         self.password = password
         self.ssh_port = ssh_port
@@ -36,19 +38,11 @@ class Base:
             'global_delay_factor': delay,
         }
         self._connection = MikrotikRouterOsSSH(**_auth)
-        self.api_port = self._get('/ip service get api port')
-        self.api_ssl_port = self._get('/ip service get api-ssl port')
-        self.ftp_port = self._get('/ip service get ftp port')
-        self.ssh_port = self._get('/ip service get ssh port')
-        self.identity = self._get('/system identity get name')
-        self.note = self._get('/system note get note')
-        self.model = self._get('/system routerboard get model')
-
-    def __str__(self):
-        return self.identity
 
     def _get(self, command: str) -> Optional[str]:
-        output = self.cmd(f'return [{command}]')
+        output = self._connection.send_command(
+            command_string=f'return [{command}]'
+        )
         if output == '':
             return None
         return output
@@ -66,4 +60,12 @@ class Base:
         Returns:
             Output of the command
         """
-        return self._connection.send_command(command)
+
+        # The `expect_string` parameter is a regex (format: [admin@mikrotik])
+        # necessary in case the router's identity is changed,
+        # there is no ReadTimeout error due to the output format changing,
+        # as it includes the router's identity
+        return self._connection.send_command(
+            command_string=command,
+            expect_string=rf'\[{self.username}@[^]]+\]',
+        )

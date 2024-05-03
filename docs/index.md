@@ -3,6 +3,7 @@
 
 [![CI](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml/badge.svg)](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml)
 [![Documentation Status](https://readthedocs.org/projects/netmikro/badge/?version=latest)](https://netmikro.henriquesebastiao.com/en/latest/?badge=latest)
+[![Coverage](assets/coverage.svg)](https://github.com/henriquesebastiao/netmikro)
 [![PyPI version](https://badge.fury.io/py/netmikro.svg)](https://badge.fury.io/py/netmikro)
 
 Netmikro is a simple library that provides an easy way to manage Mikrotik routers, simplifying configuration and monitoring tasks.
@@ -24,6 +25,10 @@ Netmikro is on the shoulders of the [Netmiko](https://github.com/ktbyers/netmiko
 **Source Code**: [https://github.com/henriquesebastiao/netmikro](https://github.com/henriquesebastiao/netmikro)
 
 ---
+
+## Compatibility note
+
+For now, Netmikro is only fully compatible with versions higher than `v7` of RouterOS, some features may even work with previous versions, but their use is not encouraged at the moment. However, I will make this support for previous versions possible as soon as possible.
 
 ## How to install
 

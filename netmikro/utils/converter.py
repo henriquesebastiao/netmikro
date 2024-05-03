@@ -1,3 +1,6 @@
+from netmikro.exceptions import UndefinedBooleanValue
+
+
 def boolean(string: str) -> bool or None or str:
     string = string.strip()
     if string == 'true':
@@ -6,4 +9,5 @@ def boolean(string: str) -> bool or None or str:
         return False
     elif string == '':
         return None
-    return string
+    else:
+        raise UndefinedBooleanValue(f'Undefined boolean value: {string}')

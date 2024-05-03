@@ -29,6 +29,7 @@ classifiers = [
 python = "^3.12"
 netmiko = "^4.2.0"
 python-dotenv = "^1.0.1"
+pytest = "^8.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.4.1,<9.0.0"
@@ -37,6 +38,8 @@ blue = "^0.9.1"
 isort = "^5.12.0"
 ruff = ">=0.0.287,<0.4.3"
 taskipy = "^1.12.0"
+coverage-badge = "^1.1.1"
+setuptools = "^69.5.1"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs-material = "^9.2.8"
@@ -51,7 +54,7 @@ mkdocs-git-authors-plugin = ">=0.7.2,<0.9.0"
 mkdocs-git-revision-date-localized-plugin = "^1.2.2"
 
 [build-system]
-requires = ["poetry-core"]
+requires = "poetry-core"
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
@@ -59,7 +62,12 @@ pythonpath = "."
 python_files = "test.py tests.py test_*.py tests_*.py *_test.py *_tests.py"
 
 [tool.coverage.run]
-omit = ["_utils.py"]
+source = [
+    "netmikro",
+]
+omit = [
+    "/tests/*",
+]
 
 [tool.isort]
 profile = "black"
@@ -79,5 +87,5 @@ format = 'blue .  && isort .'
 docs = "mkdocs serve"
 pre_test = "task lint"
 test = "pytest -s -x --cov=netmikro -vv"
-post_test = "coverage html"
+post_test = "coverage html && coverage-badge -o docs/assets/coverage.svg -f"
 export-requirements = "rm requirements.txt && poetry export -f requirements.txt --output requirements.txt --without-hashes"
