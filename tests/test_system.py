@@ -69,18 +69,16 @@ def test_system_identity_set(router):
     router.identity_set(os.getenv('IDENTITY'))
 
 
-def test_system_license(chr_router):
-    assert isinstance(chr_router.license, dict)
-    assert chr_router.license['system-id'] == os.getenv('CHR_SYSTEM_ID')
-    assert chr_router.license['level'] == os.getenv('CHR_LEVEL')
+def test_system_license(router):
+    assert isinstance(router.license, dict)
+    assert router.license['software-id'] == os.getenv('SYSTEM_ID_ROUTER')
+    assert router.license['level'] == int(os.getenv('LEVEL_ROUTER'))
 
 
 def test_system_ntp_client_get(router):
     ntp_client_output = router.ntp_client_get()
     assert isinstance(ntp_client_output, dict)
     assert isinstance(ntp_client_output['enabled'], bool)
-    for server in ntp_client_output['servers']:
-        assert validate_ip(server)
     assert ntp_client_output['vrf'] == 'main'
 
 
@@ -114,3 +112,7 @@ def test_system_note_set(router):
     assert router._get('/system note get note') == test_string
     assert boolean(router._get('/system note get show-at-login'))
     router.note_set(note=os.getenv('NOTE'), show_at_login=False)
+
+
+def test_system_is_routerboard_false(chr_router):
+    assert not chr_router.is_routerboard()

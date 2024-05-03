@@ -5,8 +5,7 @@ from netmikro.modules import Ip, System
 
 # noinspection PyUnresolvedReferences
 class RouterOS(Ip, System):
-    """
-    Class that generates the connection with a MikroTik router.
+    """Class that generates the connection with a MikroTik router.
 
     Examples:
         >>> from netmikro import RouterOS
@@ -28,14 +27,22 @@ class RouterOS(Ip, System):
         ssh_port: int = 22,
         delay: float = 0,
     ):
+        """Class that generates the connection with a MikroTik router.
+
+        Args:
+            host (str): IP address of the router you want to connect to.
+            username (str): Username to be used in the connection.
+            password (str): Password to be used in the connection.
+            ssh_port (int): SSH port to be used in the connection.
+            delay (float): Time delay between command executions on the router.
+        """
         super().__init__(host, username, password, ssh_port, delay)
 
     def cmd_multiline(self, commands: List[str]) -> str:
-        """
-        Runs multiple commands in the router's terminal.
+        """Runs multiple commands in the router's terminal.
 
-        Parameters
-            commands: List of commands to be executed
+        Args:
+            commands (List[str]): List of commands to be executed.
 
         Returns:
             str: Output of the commands

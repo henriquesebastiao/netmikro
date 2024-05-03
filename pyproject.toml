@@ -39,6 +39,10 @@ taskipy = "^1.12.0"
 coverage-badge = "^1.1.1"
 setuptools = "^69.5.1"
 pytest = "^8.2.0"
+bandit = {extras = ["toml"], version = "^1.7.8"}
+radon = {extras = ["toml"], version = "^6.0.1"}
+mypy = "^1.10.0"
+pydocstyle = "^6.3.0"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs-material = "^9.2.8"
@@ -55,6 +59,10 @@ mkdocs-git-revision-date-localized-plugin = "^1.2.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+ignore_missing_imports = true
+check_untyped_defs = true
 
 [tool.pytest.ini_options]
 pythonpath = "."
@@ -81,10 +89,21 @@ indent-width = 4
 "tests/*" = ["F401", "F811"]
 
 [tool.taskipy.tasks]
-lint = "ruff check . && blue --check --diff . && isort --check --diff ."
+ruff = "ruff check ."
+blue = "blue --check . --diff"
+isort = "isort --check --diff ."
+mypy = "mypy -p netmikro"
+radon = "radon cc ./netmikro -a -na"
+bandit = "bandit -r ./netmikro"
+pydocstyle = "pydocstyle ./netmikro --count --convention=google --add-ignore=D100,D104,D105,D107"
+lint = "task ruff && task blue && task isort"
 format = 'blue .  && isort .'
 docs = "mkdocs serve"
+quality = "task mypy && task radon && task pydocstyle"
+badge = "coverage-badge -o docs/assets/coverage.svg -f"
 pre_test = "task lint"
 test = "pytest -s -x --cov=netmikro -vv"
-post_test = "coverage html && coverage-badge -o docs/assets/coverage.svg -f && rm requirements.txt && poetry export -f requirements.txt --output requirements.txt --without-hashes"
+post_test = "coverage html"
 export-requirements = "rm requirements.txt && poetry export -f requirements.txt --output requirements.txt --without-hashes"
+export-requirements-doc = "poetry export -f requirements.txt --output docs/requirements.txt --without-hashes --only doc"
+ready = "task lint && task quality && task bandit && pytest -s -x --cov=netmikro -vv && coverage html && task export-requirements && task export-requirements-doc && task badge"

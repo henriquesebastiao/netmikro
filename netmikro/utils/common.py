@@ -4,8 +4,7 @@ from netmikro.exceptions import InvalidIpAddress
 
 
 class IpAddress:
-    """
-    Class that represents an IP address.
+    """Class that represents an IP address.
 
     Args:
         address (str): The IP address to be represented.
@@ -50,7 +49,7 @@ class IpAddress:
                 self.addresses_on_network = addresses_on_network
                 break
 
-        self.address_type = self.address_type(octets)
+        self.address_type = self.address_type_check(octets)
 
     def __str__(self) -> str:
         return self.address
@@ -62,9 +61,8 @@ class IpAddress:
         return self.address == other.address
 
     @classmethod
-    def address_type(cls, octets: list[int]) -> str:
-        """
-        Get the type of IP address.
+    def address_type_check(cls, octets: list[int]) -> str:
+        """Get the type of IP address.
 
         Args:
             octets (list): List of integers representing the IP address.

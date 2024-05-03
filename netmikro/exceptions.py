@@ -1,10 +1,10 @@
-class InvalidIpAddress(Exception):
+class InvalidIpAddress(Exception):  # noqa: D101
     pass
 
 
-class InvalidNtpMode(Exception):
+class InvalidNtpMode(Exception):  # noqa: D101
     pass
 
 
-class UndefinedBooleanValue(Exception):
+class UndefinedBooleanValue(Exception):  # noqa: D101
     pass

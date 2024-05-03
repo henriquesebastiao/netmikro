@@ -3,6 +3,7 @@ import pytest
 from netmikro.exceptions import UndefinedBooleanValue
 from netmikro.utils import boolean
 from netmikro.utils.common import InvalidIpAddress, IpAddress
+from tests._utils import ip
 
 
 def test_ip_address_class_invalid_ip():
@@ -12,22 +13,22 @@ def test_ip_address_class_invalid_ip():
         IpAddress('999.999.999.999')
 
 
-def test_ip_address_class_representation():
-    ip = '1.1.1.1'
-    ip_instance = IpAddress(ip)
-    assert str(ip_instance) == ip
+def test_ip_address_class_representation(ip):
+    assert str(ip) == '1.1.1.1'
 
 
-def test_ip_address_repr():
-    ip = '1.1.1.1'
-    ip_instance = IpAddress(ip)
-    assert repr(ip_instance) == f'IpAddress(address="{ip}")'
+def test_ip_address_repr(ip):
+    assert repr(ip) == f'IpAddress(address="{ip}")'
 
 
 def test_ip_address_eq():
     ip = '1.1.1.1'
     ip_instance = IpAddress(ip)
     assert ip_instance == IpAddress(ip)
+
+
+def test_ip_address_class_type_checker():
+    assert IpAddress.address_type_check([10, 0, 0, 0]) == 'PRIVATE'
 
 
 def test_convert_to_boolean():
