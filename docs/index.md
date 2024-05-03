@@ -34,9 +34,13 @@ For now, Netmikro is only fully compatible with versions higher than `v7` of Rou
 
 Netmikro is available on PyPi, so just use your preferred package manager:
 
-``` {.bash .copy }
-pip install netmikro
+<div class="termy">
+
+```console
+$ pip install netmikro
 ```
+
+</div>
 
 ## Basic usage
 

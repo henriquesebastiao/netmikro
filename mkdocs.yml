@@ -6,9 +6,15 @@ repo_name: henriquesebastiao/netmikro
 copyright: 2024 - Henrique Sebastião
 
 nav:
-  - Home: index.md
+  - Netmikro: index.md
   - API reference:
-      - RouterOS: api/RouterOS.md
+      - RouterOS: api/routeros.md
+      - Base: api/base.md
+      - IP: api/ip.md
+      - System: api/system.md
+  - Utils:
+      - Common: utils/common.md
+  - Contributing: contributing.md
 
 theme:
   name: material
@@ -73,10 +79,6 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.superfences
 
-
-extra_css:
-  - stylesheets/extra.css
-
 plugins:
   - mkdocstrings:
       handlers:
@@ -90,6 +92,7 @@ plugins:
   - git-committers:
       repository: henriquesebastiao/netmikro
       branch: main
+      token: !ENV ["GH_TOKEN"]
   - git-revision-date-localized:
       type: date
 
@@ -112,3 +115,12 @@ extra:
     - icon: fontawesome/solid/globe
       link: https://henriquesebastiao.com
       name: henriquesebastiao.com
+
+extra_css:
+  - css/extra.css
+  - css/termynal.css
+  - css/custom.css
+
+extra_javascript:
+  - js/termynal.js
+  - js/custom.js
