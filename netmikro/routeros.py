@@ -45,7 +45,7 @@ class RouterOS(Ip, System):
             commands (List[str]): List of commands to be executed.
 
         Returns:
-            str: Output of the commands
+            str: Output of the commands.
 
         Examples:
             >>> router.cmd_multiline([

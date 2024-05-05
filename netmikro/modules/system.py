@@ -1,5 +1,5 @@
 from datetime import date, time
-from typing import Dict, List, Optional, Union
+from typing import List
 
 from netmikro.exceptions import InvalidNtpMode
 from netmikro.modules.base import Base
@@ -11,30 +11,17 @@ class System(Base):
     """Gets system-related information from the router.
 
     Attributes:
-        identity: Name of the router (format: 'HS-A (192.168.88.1) on RB912UAG-5HPnD (mipsbe)')
-        routerboard: If the router is a RouterBoard, returns a dictionary with the following keys:
-            - model: RouterBoard model
-            - revision: Revision version
-            - serial-number: Serial number of the router
-        license: A dictionary with router license information, with the following keys:
-            - software-id: Software ID
-            - level: License level
-            - features: License features
-        note: Notes of about the router
-        resources: A dictionary with router hardware information, with the following keys:
-            - cpu: CPU model
-            - cpu-frequency: CPU frequency (MHz)
-            - memory: Total RAM (Bytes)
-            - storage: Total storage (Bytes)
-            - architecture: Router architecture
-            - board-name: Name of the board Routerboard
-            - version: Router version
+        identity (str): Name of the router (format: 'HS-A (192.168.88.1) on RB912UAG-5HPnD (mipsbe)').
+        routerboard (dict): If the router is a RouterBoard, returns a dictionary with board information.
+        license (dict): A dictionary with router license information.
+        note (str): Notes of about the router.
+        resources (dict): A dictionary with router hardware information.
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.identity = self._get('/system identity get name')
+        self.identity: str = self._get('/system identity get name')
 
         # ROUTERBOARD
         if self.is_routerboard():
@@ -52,7 +39,7 @@ class System(Base):
                 '/system routerboard get upgrade-firmware'
             )
 
-            self.routerboard: dict[str, str] = {
+            self.routerboard: dict = {
                 'model': _model,
                 'revision': _revision,
                 'serial-number': _serial_number,
@@ -67,7 +54,7 @@ class System(Base):
             _level = self._get_number('/system license get nlevel')
             _features = self._get('/system license get features')
 
-            self.license: dict[str, str | int] = {
+            self.license: dict = {
                 'software-id': _software_id,
                 'level': _level,
                 'features': _features,
@@ -85,7 +72,7 @@ class System(Base):
         _board_name = self._get('/system resource get board-name')
         _version = self._get('/system resource get version')
 
-        self.resources: dict[str, str | int] = {
+        self.resources: dict = {
             'cpu': _cpu,
             'cpu-frequency': _cpu_frequency,
             'memory': _memory,
@@ -102,7 +89,7 @@ class System(Base):
         """Returns the router's system time.
 
         Returns:
-            Time with time zone, an instance of the `time` class.
+            time: Time with time zone, an instance of the `time` class.
 
         Examples:
             >>> router.clock_time_get()
@@ -120,7 +107,7 @@ class System(Base):
         """Returns the router's system date.
 
         Returns:
-            An instance of the `date` class.
+            date: An instance of the `date` class.
 
         Examples:
             >>> router.clock_date_get()
@@ -135,7 +122,7 @@ class System(Base):
         """Returns the router's time zone.
 
         Returns:
-            Time zone in the format Continent/City
+            str: Time zone in the format Continent/City.
 
         Examples:
             >>> router.clock_time_zone_get()
@@ -147,7 +134,7 @@ class System(Base):
         """Returns the router's GMT offset.
 
         Returns:
-            GMT offset in the format +/-HH:MM
+            str: GMT offset in the format +/-HH:MM.
 
         Examples:
             >>> router.clock_gmt_offset_get()
@@ -155,20 +142,27 @@ class System(Base):
         """
         return self._get('/system clock get gmt-offset as-string')
 
-    def clock_dst_active_get(self) -> Optional[bool]:
+    def clock_dst_active_get(self) -> bool:
         """Returns True if DST is enabled, if not enabled, returns False.
 
         Returns:
-            True if DST is enabled, if not enabled, returns False.
+            bool: True if DST is enabled, if not enabled, returns False.
+
+        Examples:
+            >>> router.clock_dst_active_get()
+            True
         """
         return self._get_bool('/system clock get dst-active')
 
-    def clock_time_zone_autodetect_get(self) -> Optional[bool]:
+    def clock_time_zone_autodetect_get(self) -> bool:
         """Returns True if time-zone-autodetect is enabled, if not enabled, it returns False.
 
         Returns:
-            True if time-zone-autodetect is enabled,
-            if not enabled, returns False.
+            bool: True if time-zone-autodetect is enabled, if not enabled, returns False.
+
+        Examples:
+            >>> router.clock_time_zone_autodetect_get()
+            True
         """
         return self._get_bool('/system clock get time-zone-autodetect')
 
@@ -176,33 +170,31 @@ class System(Base):
         """Returns the current voltage at the router.
 
         Returns:
-            Voltage in Volts
+            float: Voltage in Volts.
 
         Examples:
             >>> router.health_voltage()
             24.0
         """
-        output = self._get('/system health get number=0 value')
-        return float(output)
+        return self._get_float('/system health get number=0 value')
 
     def health_temperature(self) -> float:
         """Returns the current temperature at the router.
 
         Returns:
-            Temperature in Celsius
+            float: Temperature in Celsius.
 
         Examples:
             >>> router.health_temperature()
             40.0
         """
-        output = self._get('/system health get number=1 value')
-        return float(output)
+        return self._get_float('/system health get number=1 value')
 
     def history_system_get(self) -> str:
         """Returns the history of changes made to the router's system settings.
 
         Returns:
-            History of changes made to the router's system settings
+            str: History of changes made to the router's system settings
 
         Examples:
             >>> router.history_system_get()
@@ -214,14 +206,13 @@ class System(Base):
             U changed system note settings  hick  write
             U ip service changed            hick  write
         """
-        output = self.cmd('/system history print')
-        return output
+        return self.cmd('/system history print')
 
     def identity_set(self, new_identity: str):
         """Sets the router's identity.
 
         Args:
-            new_identity: New identity to be set
+            new_identity (str): New identity to be set.
 
         Examples:
             >>> router.identity_set('new_identity')
@@ -234,9 +225,8 @@ class System(Base):
         """Sets the router's note.
 
         Args:
-            note: New note to be set
-            show_at_login: Specifies whether a new note should be
-                displayed every time a user logs into the router.
+            note (str): New note to be set.
+            show_at_login (bool): Tells whether the user should see the note when logging in.
 
         Examples:
             >>> router.note_set('new_note', True)
@@ -248,24 +238,24 @@ class System(Base):
 
     def ntp_client_get(
         self,
-    ) -> Dict[str, Union[bool, str, int, List[IpAddress], IpAddress]]:
+    ) -> dict:
         """Returns the NTP client configuration.
 
         Returns:
-            dict: Dictionary with the NTP client configuration
+            dict: Dictionary with the NTP client configuration.
 
         Examples:
             >>> router.ntp_client_get()
             {
                 'enabled': True,
-                 'freq-diff': '3.082 PPM',
-                 'mode': 'unicast',
-                 'servers': ['200.160.7.186', '201.49.148.135'],
-                 'status': 'synchronized',
-                 'synced-server': '200.160.7.186',
-                 'synced-stratum': 1,
-                 'system-offset': -0.915,
-                 'vrf': 'main'
+                'freq-diff': '3.082 PPM',
+                'mode': 'unicast',
+                'servers': ['200.160.7.186', '201.49.148.135'],
+                'status': 'synchronized',
+                'synced-server': '200.160.7.186',
+                'synced-stratum': 1,
+                'system-offset': -0.915,
+                'vrf': 'main'
             }
         """
         _enabled = self._get_bool('/system ntp client get enabled')
@@ -306,10 +296,10 @@ class System(Base):
         """Sets the NTP client configuration.
 
         Args:
-            servers (list): List of NTP servers
-            enabled (bool): Specifies whether the NTP client should be enabled
-            mode (str): Specifies the NTP client mode
-            vrf (str): Specifies the VRF to be used by the NTP client
+            servers (list): List of NTP servers.
+            enabled (bool): Specifies whether the NTP client should be enabled.
+            mode (str): Specifies the NTP client mode.
+            vrf (str): Specifies the VRF to be used by the NTP client.
 
         Examples:
             >>> router.ntp_client_set(
@@ -332,11 +322,11 @@ class System(Base):
             f'enabled={enabled_command} mode={mode} servers={servers_command} vrf={vrf}'
         )
 
-    def ntp_server_get(self) -> dict[str, Union[bool, str, None]]:
+    def ntp_server_get(self) -> dict:
         """Returns the NTP server configuration.
 
         Returns:
-            dict: Dictionary with the NTP server configuration
+            dict: Dictionary with the NTP server configuration.
 
         Examples:
             >>> router.ntp_server_get()
@@ -363,9 +353,6 @@ class System(Base):
         """Returns True if the router is a RouterBoard, if not, returns False.
 
         Returns:
-            bool: True if the router is a RouterBoard, if not, returns False
+            bool: True if the router is a RouterBoard, if not, returns False.
         """
-        get_routerboard = self._get('/system routerboard get routerboard')
-        if get_routerboard != 'true':
-            return False
-        return True
+        return self._get_bool('/system routerboard get routerboard')

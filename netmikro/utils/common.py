@@ -3,6 +3,7 @@ from re import match
 from netmikro.exceptions import InvalidIpAddress
 
 
+# noinspection PyUnresolvedReferences
 class IpAddress:
     """Class that represents an IP address.
 
@@ -20,7 +21,19 @@ class IpAddress:
         __str__: Returns the IP address.
         __repr__: Returns the representation of the class.
         __eq__: Compares two IP addresses.
-        address_type: Returns the type of the IP address.
+
+    Examples:
+        >>> ip = IpAddress('192.168.88.1')
+        >>> ip.address
+        '192.168.88.1'
+        >>> ip.binary
+        '11000000.10101000.01011000.00000001'
+        >>> ip.class_address
+        'C'
+        >>> ip.addresses_on_network
+        256
+        >>> ip.address_type
+        'PRIVATE'
     """
 
     def __init__(self, address: str):
@@ -69,6 +82,10 @@ class IpAddress:
 
         Returns:
             str: The type of the IP address.
+
+        Examples:
+            >>> IpAddress.address_type_check([192, 168, 88, 1])
+            'PRIVATE'
         """
         address_types = {
             (0,): 'CURRENT',

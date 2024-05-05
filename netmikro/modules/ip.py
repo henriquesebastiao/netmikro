@@ -7,13 +7,23 @@ from ..utils import validate_port
 
 @dataclass
 class IpService:
-    """Class for representing ip service on a MikroTik router."""
+    """Class for representing ip service on a MikroTik router.
+
+    Attributes:
+        port (int): Port number of the service.
+        disabled (bool): Whether the service is disabled or not.
+        available_from (str): IP address from which the service is available.
+
+    Examples:
+        >>> service = IpService(8728, False, '192.168.88.1')
+    """
 
     port: int
     disabled: bool
     available_from: str
 
 
+# noinspection PyUnresolvedReferences
 class Ip(Base):
     """Class that generates the connection with a MikroTik router.
 
@@ -50,6 +60,9 @@ class Ip(Base):
         Args:
             service_name: The service to be changed.
             port: The new port number.
+
+        Examples:
+            >>> router.ip_port_set('www', 8080)
         """
         validate_port(port)
         self.cmd(f'/ip service set {service_name} port={port}')

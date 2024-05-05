@@ -3,6 +3,7 @@ from netmiko.mikrotik.mikrotik_ssh import MikrotikRouterOsSSH
 from ..utils.common import IpAddress
 
 
+# noinspection PyUnresolvedReferences
 class Base:
     """Class that generates the connection with a MikroTik router.
 
@@ -45,22 +46,68 @@ class Base:
         self._connection = MikrotikRouterOsSSH(**_auth)
 
     def _get(self, command: str) -> str:
+        """Method for returning string outputs.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            str: Output of the command.
+        """
         output = self._connection.send_command(f'return [{command}]').strip()
         return output
 
     def _get_number(self, command: str) -> int:
+        """Method for returning numeric outputs in integers.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            int: Numeric output of the command.
+        """
         output = self._connection.send_command(f'return [{command}]').strip()
         if output == '':
             return 0
         return int(output)
 
+    def _get_float(self, command: str) -> float:
+        """Method for returning numeric outputs in floats.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            float: Numeric output of the command.
+        """
+        output = self._connection.send_command(f'return [{command}]').strip()
+        if output == '':
+            return 0.0
+        return float(output)
+
     def _get_bool(self, command: str) -> bool:
+        """Method for returning boolean outputs.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            bool: Boolean output of the command.
+        """
         output = self._connection.send_command(f'return [{command}]').strip()
         if output == 'true':
             return True
         return False
 
     def _get_list_ips(self, command: str) -> list[IpAddress]:
+        """Method for returning lists of IP addresses.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            list[IpAddress]: List of IP addresses.
+        """
         output = (
             self._connection.send_command(f'return [{command}]')
             .strip()
@@ -69,17 +116,25 @@ class Base:
         return [IpAddress(ip) for ip in output]
 
     def disconnect(self):
-        """Disconnects the connection with the router."""
+        """Disconnects the connection with the router.
+
+        Examples:
+            >>> router.disconnect()
+        """
         return self._connection.disconnect()
 
     def cmd(self, command: str) -> str:
         """Runs a command in the router's terminal.
 
         Args:
-            command (str): Command to be executed
+            command (str): Command to be executed.
 
         Returns:
             str: Output of the command
+
+        Examples:
+            >>> router.cmd('/system identity print')
+            'name: Netmikro'
         """
         # The `expect_string` parameter is a regex (format: [admin@mikrotik])
         # necessary in case the router's identity is changed,
