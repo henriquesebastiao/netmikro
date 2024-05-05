@@ -15,7 +15,7 @@ users from potential threats.
 
 ## Reporting Vulnerabilities
 
-If you discover a vulnerability in Netmikro, please report it immediately by sending an email to [security@henriquesebastiao.com](mailto:henriquesebastiao.com). Include the following details:
+If you discover a vulnerability in Netmikro, please report it immediately by sending an email to [security@henriquesebastiao.com](mailto:security@henriquesebastiao.com). Include the following details:
 
 - Description of the vulnerability
 - Steps to reproduce the issue
@@ -46,4 +46,4 @@ We are continuously improving Netmikro's security. Users and contributors are en
 
 ## Contact
 
-For security issues or inquiries, please reach out to [security@henriquesebastiao.com](mailto:henriquesebastiao.com).
+For security issues or inquiries, please reach out to [security@henriquesebastiao.com](mailto:security@henriquesebastiao.com).
