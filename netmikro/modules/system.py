@@ -313,7 +313,7 @@ class System(Base):
 
         enabled_command = 'yes' if enabled else 'no'
         mode = mode.lower().strip()
-        if mode not in ['unicast', 'broadcast', 'multicast', 'manycast']:
+        if mode not in {'unicast', 'broadcast', 'multicast', 'manycast'}:
             raise InvalidNtpMode(f'Invalid mode: {mode}')
         vrf = vrf.lower().strip()
 

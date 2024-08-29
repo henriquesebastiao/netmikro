@@ -73,6 +73,9 @@ class IpAddress:
     def __eq__(self, other):
         return self.address == other.address
 
+    def __hash__(self) -> int:
+        return hash(self.address)
+
     @classmethod
     def address_type_check(cls, octets: list[int]) -> str:
         """Get the type of IP address.

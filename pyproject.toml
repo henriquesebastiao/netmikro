@@ -27,22 +27,20 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-netmiko = "^4.2.0"
+netmiko = "^4.4.0"
 python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = ">=4.1,<6.0"
-blue = "^0.9.1"
-isort = "^5.12.0"
-ruff = ">=0.5.1,<0.6.3"
-taskipy = "^1.12.0"
-coverage-badge = "^1.1.1"
+taskipy = "^1.13.0"
+coverage-badge = "^1.1.2"
 setuptools = ">=69.5.1,<75.0.0"
-pytest = "^8.2.0"
-bandit = {extras = ["toml"], version = "^1.7.8"}
+pytest = "^8.3.2"
+bandit = {extras = ["toml"], version = "^1.7.9"}
 radon = {extras = ["toml"], version = "^6.0.1"}
-mypy = "^1.10.0"
+mypy = "^1.11.2"
 pydocstyle = "^6.3.0"
+ruff = "^0.6.2"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs-material = "^9.2.8"
@@ -76,28 +74,33 @@ omit = [
     "/tests/*",
 ]
 
-[tool.isort]
-profile = "black"
-line_length = 79
-
 [tool.ruff]
 line-length = 79
-indent-width = 4
+extend-exclude = ['']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT', 'D', 'UP']
+ignore = ['D100', 'D104', 'D105', 'D107', 'E501', 'PLR0914']
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F403", "F401"]
-"tests/*" = ["F401", "F811"]
+"tests/*" = ["F401", "F811", "D"]
 
 [tool.taskipy.tasks]
-ruff = "ruff check ."
-blue = "blue --check . --diff"
-isort = "isort --check --diff ."
 mypy = "mypy -p netmikro"
 radon = "radon cc ./netmikro -a -na"
 bandit = "bandit -r ./netmikro"
 pydocstyle = "pydocstyle ./netmikro --count --convention=google --add-ignore=D100,D104,D105,D107"
-lint = "task ruff && task blue && task isort"
-format = 'blue .  && isort .'
+lint = "ruff check .; ruff check . --diff"
+format = 'ruff format .; ruff check . --fix'
 docs = "mkdocs serve"
 quality = "task mypy && task radon && task pydocstyle"
 badge = "coverage-badge -o docs/assets/coverage.svg -f"

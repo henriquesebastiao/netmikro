@@ -5,5 +5,5 @@ def validate_port(port: int):
         port (int): Port to be validated.
 
     """
-    if port < 1 or port > 65535:
+    if port < 1 or port > 65535:  # noqa: PLR2004
         raise ValueError(f'Invalid port: {port}')

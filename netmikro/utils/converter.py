@@ -17,7 +17,7 @@ def boolean(string: str) -> Union[bool, None, str]:
         return True
     elif string == 'false':
         return False
-    elif string == '':
+    elif not string:
         return None
     else:
         raise UndefinedBooleanValue(f'Undefined boolean value: {string}')

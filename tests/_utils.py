@@ -1,8 +1,8 @@
 import os
 from re import match
 
+import pytest
 from dotenv import load_dotenv
-from pytest import fixture
 
 from netmikro.routeros import RouterOS
 from netmikro.utils import IpAddress
@@ -10,7 +10,7 @@ from netmikro.utils import IpAddress
 load_dotenv()
 
 
-@fixture(scope='session')
+@pytest.fixture(scope='session')
 def router():
     """Fixture to create a RouterOS connection to be used in tests."""
     connection = RouterOS(
@@ -24,12 +24,12 @@ def router():
     connection.disconnect()
 
 
-@fixture(scope='function')
+@pytest.fixture
 def ip():
-    yield IpAddress('1.1.1.1')
+    return IpAddress('1.1.1.1')
 
 
-@fixture(scope='session')
+@pytest.fixture(scope='session')
 def chr_router():
     """Fixture to create a RouterOS connection to be used in tests."""
     connection = RouterOS(
@@ -43,15 +43,14 @@ def chr_router():
     connection.disconnect()
 
 
-@fixture(scope='function')
+@pytest.fixture
 def clean(router):
     yield ...
     router.identity_set('Netmikro')
 
 
 def validate_ip(ip):
-    """
-    Validate if ip is valid
+    """Validate if ip is valid
 
     :param ip: Ip to be validated
     :return: True if ip is valid, False otherwise

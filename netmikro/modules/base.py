@@ -67,7 +67,7 @@ class Base:
             int: Numeric output of the command.
         """
         output = self._connection.send_command(f'return [{command}]').strip()
-        if output == '':
+        if not output:
             return 0
         return int(output)
 
@@ -81,7 +81,7 @@ class Base:
             float: Numeric output of the command.
         """
         output = self._connection.send_command(f'return [{command}]').strip()
-        if output == '':
+        if not output:
             return 0.0
         return float(output)
 

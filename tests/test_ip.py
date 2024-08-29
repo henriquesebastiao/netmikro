@@ -7,7 +7,7 @@ load_dotenv()
 
 
 @pytest.mark.parametrize(
-    'service,default_port',
+    ('service', 'default_port'),
     [
         ('api', 8728),
         ('api-ssl', 8729),
@@ -24,7 +24,7 @@ def test_ip_port_get_command(router, service, default_port):
 
 
 @pytest.mark.parametrize(
-    'service,default_port',
+    ('service', 'default_port'),
     [
         ('api', 8728),
         ('api-ssl', 8729),
@@ -39,7 +39,7 @@ def test_ip_port_get(router, service, default_port):
 
 
 @pytest.mark.parametrize(
-    'service,default_port',
+    ('service', 'default_port'),
     [
         ('api', 8728),
         ('api-ssl', 8729),
@@ -51,7 +51,7 @@ def test_ip_port_get(router, service, default_port):
 )
 def test_ip_port_set(router, service, default_port):
     router.ip_port_set(service, 65000)
-    assert router.service[service].port == 65000
+    assert router.service[service].port == 65000  # noqa: PLR2004
     router.ip_port_set(service, default_port)
 
 
