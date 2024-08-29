@@ -12,8 +12,8 @@ nav:
       - Base: api/base.md
       - IP: api/ip.md
       - System: api/system.md
-  - Utils:
-      - Common: utils/common.md
+  - Outros:
+      - Validadores: others/validators.md
   - Estrutura: structure.md
   - Contributing: contributing.md
 
