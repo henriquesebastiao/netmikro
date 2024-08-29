@@ -1,5 +1,6 @@
 import pytest
 from dotenv import load_dotenv
+from pydantic import ValidationError
 
 load_dotenv()
 
@@ -65,5 +66,7 @@ def test_ip_port_set(router, service, default_port):
     ],
 )
 def test_ip_port_set_error(router, service):
-    with pytest.raises(ValueError, match='Invalid port'):
+    with pytest.raises(
+        ValidationError, match='Input should be less than or equal to 65535'
+    ):
         router.ip_port_set(service, 70000)

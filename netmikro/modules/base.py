@@ -1,9 +1,10 @@
+from ipaddress import IPv4Address
+
 from netmiko.mikrotik.mikrotik_ssh import MikrotikRouterOsSSH
 
-from ..utils.common import IpAddress
+from netmikro.validators import Auth, Port
 
 
-# noinspection PyUnresolvedReferences
 class Base:
     """Class that generates the connection with a MikroTik router.
 
@@ -15,11 +16,8 @@ class Base:
         delay (float): Time delay between command executions on the router.
 
     Attributes:
-        host (IpAddress): IP address of the router you want to connect to.
-        username (str): Username to be used in the connection.
-        password (str): Password to be used in the connection.
-        ssh_port (int): SSH port to be used in the connection.
-        delay (float): Time delay between command executions on the router.
+        _auth (Auth): Credenciais necessárias para realizar conexão como roteador.
+        _connection (MikrotikRouterOsSSH): Conexão com o dispositivo.
     """
 
     def __init__(
@@ -30,20 +28,22 @@ class Base:
         ssh_port: int = 22,
         delay: float = 0,
     ):
-        self.host = host
-        self.username = username
-        self.password = password
-        self.ssh_port = ssh_port
-        self.delay = delay
-        _auth = {
-            'device_type': 'mikrotik_routeros',
-            'host': host,
-            'username': username,
-            'password': password,
-            'port': ssh_port,
-            'global_delay_factor': delay,
-        }
-        self._connection = MikrotikRouterOsSSH(**_auth)
+        _auth = Auth(
+            host=host,
+            username=username,
+            password=password,
+            port=Port(port=ssh_port).port,
+            global_delay_factor=delay,
+        )
+
+        self._connection = MikrotikRouterOsSSH(
+            device_type='mikrotik_routeros',
+            host=str(_auth.host),
+            username=_auth.username,
+            password=_auth.password,
+            port=_auth.port,
+            global_delay_factor=_auth.global_delay_factor,
+        )
 
     def _cmd(self, command: str) -> str:
         """Runs a command in the router's terminal.
@@ -64,7 +64,7 @@ class Base:
         # as it includes the router's identity
         return self._connection.send_command(
             command_string=command,
-            expect_string=rf'\[{self.username}@[^]]+\]',
+            expect_string=rf'\[{self._username}@[^]]+\]',
         )
 
     def _get(self, command: str) -> str:
@@ -121,18 +121,18 @@ class Base:
             return True
         return False
 
-    def _get_list_ips(self, command: str) -> list[IpAddress]:
+    def _get_list_ips(self, command: str) -> list[IPv4Address]:
         """Method for returning lists of IP addresses.
 
         Args:
             command (str): Command to be executed.
 
         Returns:
-            list[IpAddress]: List of IP addresses.
+            list[IPv4Address]: List of IP addresses.
         """
         output = (
             self._connection.send_command(f'return [{command}]')
             .strip()
             .split(';')
         )
-        return [IpAddress(ip) for ip in output]
+        return [IPv4Address(ip) for ip in output]

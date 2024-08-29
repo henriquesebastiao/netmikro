@@ -6,6 +6,7 @@ import pytest
 
 from netmikro.exceptions import InvalidNtpMode
 from netmikro.utils import boolean
+from netmikro.validators import License, NTPClient, NTPServer
 
 
 def test_system_str(router):
@@ -69,16 +70,16 @@ def test_system_identity_set(router):
 
 
 def test_system_license(router):
-    assert isinstance(router.license, dict)
-    assert router.license['software-id'] == os.getenv('SYSTEM_ID_ROUTER')
-    assert router.license['level'] == int(os.getenv('LEVEL_ROUTER'))
+    assert isinstance(router.license, License)
+    assert router.license.software_id == os.getenv('SYSTEM_ID_ROUTER')
+    assert router.license.level == int(os.getenv('LEVEL_ROUTER'))
 
 
 def test_system_ntp_client_get(router):
     ntp_client_output = router.ntp_client_get()
-    assert isinstance(ntp_client_output, dict)
-    assert isinstance(ntp_client_output['enabled'], bool)
-    assert ntp_client_output['vrf'] == 'main'
+    assert isinstance(ntp_client_output, NTPClient)
+    assert isinstance(ntp_client_output.enabled, bool)
+    assert ntp_client_output.vrf == 'main'
 
 
 def test_system_ntp_client_set(router):
@@ -97,12 +98,12 @@ def test_system_ntp_client_set(router):
 
 def test_system_ntp_server_get(router):
     ntp_server_output = router.ntp_server_get()
-    assert isinstance(ntp_server_output, dict)
-    assert isinstance(ntp_server_output['enabled'], bool)
-    assert isinstance(ntp_server_output['broadcast'], bool)
-    assert isinstance(ntp_server_output['multicast'], bool)
-    assert isinstance(ntp_server_output['manycast'], bool)
-    assert ntp_server_output['vrf'] == 'main'
+    assert isinstance(ntp_server_output, NTPServer)
+    assert isinstance(ntp_server_output.enabled, bool)
+    assert isinstance(ntp_server_output.broadcast, bool)
+    assert isinstance(ntp_server_output.multicast, bool)
+    assert isinstance(ntp_server_output.manycast, bool)
+    assert ntp_server_output.vrf == 'main'
 
 
 def test_system_note_set(router):

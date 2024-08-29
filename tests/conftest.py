@@ -5,7 +5,6 @@ import pytest
 from dotenv import load_dotenv
 
 from netmikro.routeros import RouterOS
-from netmikro.utils import IpAddress
 
 load_dotenv()
 
@@ -22,11 +21,6 @@ def router():
     )
     yield connection
     connection.disconnect()
-
-
-@pytest.fixture
-def ip():
-    return IpAddress('1.1.1.1')
 
 
 @pytest.fixture(scope='session')

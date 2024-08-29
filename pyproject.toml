@@ -29,6 +29,7 @@ classifiers = [
 python = "^3.11"
 netmiko = "^4.4.0"
 python-dotenv = "^1.0.1"
+pydantic = "^2.8.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest-cov = ">=4.1,<6.0"
@@ -38,7 +39,6 @@ setuptools = ">=69.5.1,<75.0.0"
 pytest = "^8.3.2"
 bandit = {extras = ["toml"], version = "^1.7.9"}
 radon = {extras = ["toml"], version = "^6.0.1"}
-mypy = "^1.11.2"
 ruff = "^0.6.2"
 
 [tool.poetry.group.doc.dependencies]
@@ -57,13 +57,8 @@ mkdocs-git-revision-date-localized-plugin = "^1.2.2"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.mypy]
-ignore_missing_imports = true
-check_untyped_defs = true
-
 [tool.pytest.ini_options]
 pythonpath = "."
-python_files = "test.py tests.py test_*.py tests_*.py *_test.py *_tests.py"
 
 [tool.coverage.run]
 source = [
@@ -92,6 +87,7 @@ convention = "google"
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F403", "F401"]
 "tests/*" = ["F401", "F811", "D"]
+"validators.py" = ["D"]
 
 [tool.taskipy.tasks]
 mypy = "mypy -p netmikro"

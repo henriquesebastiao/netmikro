@@ -1,9 +1,17 @@
 from datetime import date, time
+from ipaddress import IPv4Address
 from typing import List
 
 from netmikro.exceptions import InvalidNtpMode
 from netmikro.modules.base import Base
-from netmikro.utils import IpAddress, boolean
+from netmikro.utils import boolean
+from netmikro.validators import (
+    IfRouterboard,
+    License,
+    NTPClient,
+    NTPServer,
+    Resources,
+)
 
 
 # noinspection PyUnresolvedReferences
@@ -23,67 +31,46 @@ class System(Base):
 
         self.identity: str = self._get('/system identity get name')
 
-        # ROUTERBOARD
         if self.is_routerboard():
-            _model = self._get('/system routerboard get model')
-            _revision = self._get('/system routerboard get revision')
-            _serial_number = self._get('/system routerboard get serial-number')
-            _firmware_type = self._get('/system routerboard get firmware-type')
-            _factory_firmware = self._get(
-                '/system routerboard get factory-firmware'
+            # ROUTERBOARD
+            prefix = '/system routerboard get'
+            self.routerboard = IfRouterboard(
+                model=self._get(f'{prefix} model'),
+                revision=self._get(f'{prefix} revision'),
+                serial_number=self._get(f'{prefix} serial-number'),
+                firmware_type=self._get(f'{prefix} firmware-type'),
+                factory_firmware=self._get(f'{prefix} factory-firmware'),
+                current_firmware=self._get(f'{prefix} current-firmware'),
+                upgrade_firmware=self._get(f'{prefix} upgrade-firmware'),
             )
-            _current_firmware = self._get(
-                '/system routerboard get current-firmware'
-            )
-            _upgrade_firmware = self._get(
-                '/system routerboard get upgrade-firmware'
-            )
-
-            self.routerboard: dict = {
-                'model': _model,
-                'revision': _revision,
-                'serial-number': _serial_number,
-                'firmware-type': _firmware_type,
-                'factory-firmware': _factory_firmware,
-                'current-firmware': _current_firmware,
-                'upgrade-firmware': _upgrade_firmware,
-            }
 
             # LICENSE
-            _software_id = self._get('/system license get software-id')
-            _level = self._get_number('/system license get nlevel')
-            _features = self._get('/system license get features')
-
-            self.license: dict = {
-                'software-id': _software_id,
-                'level': _level,
-                'features': _features,
-            }
+            prefix = '/system license get'
+            self.license = License(
+                software_id=self._get(f'{prefix} software-id'),
+                level=self._get_number(f'{prefix} nlevel'),
+                features=self._get(f'{prefix} features'),
+            )
 
         # NOTE
         self.note = self._get('/system note get note')
 
         # RESOURCES
-        _cpu = self._get('/system resources get cpu')
-        _cpu_frequency = self._get_number('/system resource get cpu-frequency')
-        _memory = self._get_number('/system resource get total-memory')
-        _storage = self._get_number('/system resource get total-hdd-space')
-        _architecture = self._get('/system resource get architecture-name')
-        _board_name = self._get('/system resource get board-name')
-        _version = self._get('/system resource get version')
-
-        self.resources: dict = {
-            'cpu': _cpu,
-            'cpu-frequency': _cpu_frequency,
-            'memory': _memory,
-            'storage': _storage,
-            'architecture': _architecture,
-            'board-name': _board_name,
-            'version': _version,
-        }
+        prefix = '/system resource get'
+        self.resources = Resources(
+            cpu=self._get('/system resource get cpu'),
+            cpu_frequency=self._get_number(
+                '/system resource get cpu-frequency'
+            ),
+            memory=self._get_number('/system resource get total-memory'),
+            storage=self._get_number('/system resource get total-hdd-space'),
+            architecture=self._get('/system resource get architecture-name'),
+            board_name=self._get('/system resource get board-name'),
+            version=self._get('/system resource get version'),
+        )
 
     def __str__(self) -> str:
-        return f'{self.identity} ({self.host}) on {self.resources["board-name"]} ({self.resources["architecture"]})'
+        return f'{self.identity} ({self._host}) on {self.resources.board_name} ({self.resources.architecture})'
 
     def clock_time_get(self) -> time:
         """Returns the router's system time.
@@ -238,7 +225,7 @@ class System(Base):
 
     def ntp_client_get(
         self,
-    ) -> dict:
+    ) -> NTPClient:
         """Returns the NTP client configuration.
 
         Returns:
@@ -258,37 +245,24 @@ class System(Base):
                 'vrf': 'main'
             }
         """
-        _enabled = self._get_bool('/system ntp client get enabled')
-        _mode = self._get('/system ntp client get mode')
-        _servers = self._get_list_ips('/system ntp client get servers')
-        _vrf = self._get('/system ntp client get vrf')
-        _freq_dift = self._get_number('/system ntp client get freq-drift')
-        _status = self._get('/system ntp client get status')
-        _synced_server = IpAddress(
-            self._get('/system ntp client get synced-server')
-        )
-        _synced_stratum = self._get_number(
-            '/system ntp client get synced-stratum'
-        )
-        _system_offset = self._get_number(
-            '/system ntp client get system-offset'
+        prefix = '/system ntp client get'
+        npt_client = NTPClient(
+            enabled=self._get_bool(f'{prefix} enabled'),
+            mode=self._get(f'{prefix} mode'),
+            servers=self._get_list_ips(f'{prefix} servers'),
+            vrf=self._get(f'{prefix} vrf'),
+            freq_diff=self._get_number(f'{prefix} freq-drift'),
+            status=self._get(f'{prefix} status'),
+            synced_server=IPv4Address(self._get(f'{prefix} synced-server')),
+            synced_stratum=self._get_number(f'{prefix} synced-stratum'),
+            system_offset=self._get_number(f'{prefix} system-offset'),
         )
 
-        return {
-            'enabled': _enabled,
-            'mode': _mode,
-            'servers': _servers,
-            'vrf': _vrf,
-            'freq-diff': _freq_dift,
-            'status': _status,
-            'synced-server': _synced_server,
-            'synced-stratum': _synced_stratum,
-            'system-offset': _system_offset,
-        }
+        return npt_client
 
     def ntp_client_set(
         self,
-        servers: List[IpAddress],
+        servers: List[IPv4Address],
         enabled: bool = True,
         mode: str = 'unicast',
         vrf: str = 'main',
@@ -309,7 +283,9 @@ class System(Base):
                 'main'
             )
         """
-        servers_command: str = ','.join([str(server) for server in servers])
+        servers_command: str = ','.join([
+            str(IPv4Address(server)) for server in servers
+        ])
 
         enabled_command = 'yes' if enabled else 'no'
         mode = mode.lower().strip()
@@ -322,7 +298,7 @@ class System(Base):
             f'enabled={enabled_command} mode={mode} servers={servers_command} vrf={vrf}'
         )
 
-    def ntp_server_get(self) -> dict:
+    def ntp_server_get(self) -> NTPServer:
         """Returns the NTP server configuration.
 
         Returns:
@@ -339,15 +315,24 @@ class System(Base):
                 'vrf': 'main'
             }
         """
-        ntp_command = '/system ntp server get'
-        return {
-            'enabled': boolean(self._get(f'{ntp_command} enabled')),
-            'broadcast': boolean(self._get(f'{ntp_command} broadcast')),
-            'multicast': boolean(self._get(f'{ntp_command} multicast')),
-            'manycast': boolean(self._get(f'{ntp_command} manycast')),
-            'broadcast-address': self._get(f'{ntp_command} broadcast-address'),
-            'vrf': self._get(f'{ntp_command} vrf'),
-        }
+        prefix = '/system ntp server get'
+
+        _broadcast_address = (
+            IPv4Address(_broadcast_address)
+            if (_broadcast_address := self._get(f'{prefix} broadcast-address'))
+            else None
+        )
+
+        ntp_server = NTPServer(
+            enabled=boolean(self._get(f'{prefix} enabled')),
+            broadcast=boolean(self._get(f'{prefix} broadcast')),
+            multicast=boolean(self._get(f'{prefix} multicast')),
+            manycast=boolean(self._get(f'{prefix} manycast')),
+            broadcast_address=_broadcast_address,
+            vrf=self._get(f'{prefix} vrf'),
+        )
+
+        return ntp_server
 
     def is_routerboard(self) -> bool:
         """Returns True if the router is a RouterBoard, if not, returns False.

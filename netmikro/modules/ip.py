@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 
 from netmikro.modules.base import Base
-
-from ..utils import validate_port
+from netmikro.validators import Port
 
 
 @dataclass
@@ -64,6 +63,7 @@ class Ip(Base):
         Examples:
             >>> router.ip_port_set('www', 8080)
         """
-        validate_port(port)
-        self._cmd(f'/ip service set {service_name} port={port}')
+        self._cmd(
+            f'/ip service set {service_name} port={Port(port=port).port}'
+        )
         self.service[service_name].port = port

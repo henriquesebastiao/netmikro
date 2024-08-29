@@ -38,6 +38,9 @@ class RouterOS(Ip, System):
         """
         super().__init__(host, username, password, ssh_port, delay)
 
+        self._username = username
+        self._host = host
+
     def disconnect(self):
         """Disconnects the connection with the router.
 
@@ -65,7 +68,7 @@ class RouterOS(Ip, System):
         # as it includes the router's identity
         return self._connection.send_command(
             command_string=command,
-            expect_string=rf'\[{self.username}@[^]]+\]',
+            expect_string=rf'\[{self._username}@[^]]+\]',
         )
 
     def cmd_multiline(self, commands: List[str]) -> str:

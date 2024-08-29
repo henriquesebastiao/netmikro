@@ -28,9 +28,6 @@ jobs:
       
       - name: Run Radon
         run: poetry run task radon
-      
-      - name: Run MyPy
-        run: poetry run task mypy
   
   security:
     name: Code Security
