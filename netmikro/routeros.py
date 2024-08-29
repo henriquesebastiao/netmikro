@@ -38,6 +38,36 @@ class RouterOS(Ip, System):
         """
         super().__init__(host, username, password, ssh_port, delay)
 
+    def disconnect(self):
+        """Disconnects the connection with the router.
+
+        Examples:
+            >>> router.disconnect()
+        """
+        return self._connection.disconnect()
+
+    def cmd(self, command: str) -> str:
+        """Runs a command in the router's terminal.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            str: Output of the command
+
+        Examples:
+            >>> router.cmd('/system identity print')
+            'name: Netmikro'
+        """
+        # The `expect_string` parameter is a regex (format: [admin@mikrotik])
+        # necessary in case the router's identity is changed,
+        # there is no ReadTimeout error due to the output format changing,
+        # as it includes the router's identity
+        return self._connection.send_command(
+            command_string=command,
+            expect_string=rf'\[{self.username}@[^]]+\]',
+        )
+
     def cmd_multiline(self, commands: List[str]) -> str:
         """Runs multiple commands in the router's terminal.
 
