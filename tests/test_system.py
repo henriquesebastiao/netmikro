@@ -6,7 +6,6 @@ import pytest
 
 from netmikro.exceptions import InvalidNtpMode
 from netmikro.utils import boolean
-from tests._utils import chr_router, router, validate_ip
 
 
 def test_system_str(router):

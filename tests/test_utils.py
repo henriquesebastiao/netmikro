@@ -3,7 +3,6 @@ import pytest
 from netmikro.exceptions import UndefinedBooleanValue
 from netmikro.utils import boolean
 from netmikro.utils.common import InvalidIpAddress, IpAddress
-from tests._utils import ip
 
 
 def test_ip_address_class_invalid_ip():

@@ -2,8 +2,6 @@ import os
 
 from dotenv import load_dotenv
 
-from tests._utils import router
-
 load_dotenv()
 
 
