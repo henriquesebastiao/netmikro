@@ -28,14 +28,6 @@ Semelhante ao método anterior, porém é usado quando o comando deve retornar u
 
 Executa um comando no roteador Mikrotik que deve retornar um valor booleano. Valores booleanos nos dispositivos Mikrotik são retonados como strings `'true'` ou `'false'`, sendo assim Netmikro lê esses valores e faz o casting para o devido tipo booleano em Python (`True` caso receba `'true'`, ou `False` caso receba qualquer outra coisa) e o retorna.
 
-#### disconnect()
-
-Encerra a conexão com o roteador.
-
-#### cmd(command):
-
-Executa demais comandos no roteador.
-
 ### *class* RouterOS(host, username, password, ssh_port)
 
 Responsável por criar uma instancia de um roteador Mikrotik, segue um exemplo:
@@ -54,6 +46,14 @@ router = RouterOS(
 router.cmd('/system identity print')
 ...
 ```
+
+#### disconnect()
+
+Encerra a conexão com o roteador.
+
+#### cmd(command)
+
+Executa demais comandos no roteador.
 
 #### cmd_multiliine(commands)
 
