@@ -45,6 +45,28 @@ class Base:
         }
         self._connection = MikrotikRouterOsSSH(**_auth)
 
+    def _cmd(self, command: str) -> str:
+        """Runs a command in the router's terminal.
+
+        Args:
+            command (str): Command to be executed.
+
+        Returns:
+            str: Output of the command
+
+        Examples:
+            >>> router._cmd('/system identity print')
+            'name: Netmikro'
+        """
+        # The `expect_string` parameter is a regex (format: [admin@mikrotik])
+        # necessary in case the router's identity is changed,
+        # there is no ReadTimeout error due to the output format changing,
+        # as it includes the router's identity
+        return self._connection.send_command(
+            command_string=command,
+            expect_string=rf'\[{self.username}@[^]]+\]',
+        )
+
     def _get(self, command: str) -> str:
         """Method for returning string outputs.
 

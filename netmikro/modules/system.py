@@ -206,7 +206,7 @@ class System(Base):
             U changed system note settings  hick  write
             U ip service changed            hick  write
         """
-        return self.cmd('/system history print')
+        return self._cmd('/system history print')
 
     def identity_set(self, new_identity: str):
         """Sets the router's identity.
@@ -218,7 +218,7 @@ class System(Base):
             >>> router.identity_set('new_identity')
         """
         new_identity.strip()
-        self.cmd(f'/system identity set name={new_identity}')
+        self._cmd(f'/system identity set name={new_identity}')
         self.identity = new_identity
 
     def note_set(self, note: str, show_at_login: bool = False):
@@ -232,7 +232,7 @@ class System(Base):
             >>> router.note_set('new_note', True)
         """
         show_at_login_command = 'yes' if show_at_login else 'no'
-        self.cmd(
+        self._cmd(
             f'/system note set note="{note}" show-at-login={show_at_login_command}'
         )
 
@@ -317,7 +317,7 @@ class System(Base):
             raise InvalidNtpMode(f'Invalid mode: {mode}')
         vrf = vrf.lower().strip()
 
-        self.cmd(
+        self._cmd(
             f'/system ntp client set '
             f'enabled={enabled_command} mode={mode} servers={servers_command} vrf={vrf}'
         )

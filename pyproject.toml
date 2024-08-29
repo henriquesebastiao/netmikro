@@ -39,7 +39,6 @@ pytest = "^8.3.2"
 bandit = {extras = ["toml"], version = "^1.7.9"}
 radon = {extras = ["toml"], version = "^6.0.1"}
 mypy = "^1.11.2"
-pydocstyle = "^6.3.0"
 ruff = "^0.6.2"
 
 [tool.poetry.group.doc.dependencies]
@@ -98,15 +97,11 @@ convention = "google"
 mypy = "mypy -p netmikro"
 radon = "radon cc ./netmikro -a -na"
 bandit = "bandit -r ./netmikro"
-pydocstyle = "pydocstyle ./netmikro --count --convention=google --add-ignore=D100,D104,D105,D107"
 lint = "ruff check .; ruff check . --diff"
 format = 'ruff format .; ruff check . --fix'
-docs = "mkdocs serve"
-quality = "task mypy && task radon && task pydocstyle"
+doc = "mkdocs serve"
 badge = "coverage-badge -o docs/assets/coverage.svg -f"
 pre_test = "task lint"
 test = "pytest -s -x --cov=netmikro -vv"
 post_test = "coverage html"
-export-requirements = "rm requirements.txt && poetry export -f requirements.txt --output requirements.txt --without-hashes"
 export-requirements-doc = "poetry export -f requirements.txt --output docs/requirements.txt --without-hashes --only doc"
-ready = "task lint && task quality && task bandit && pytest -s -x --cov=netmikro -vv && coverage html && task export-requirements && task export-requirements-doc && task badge"
