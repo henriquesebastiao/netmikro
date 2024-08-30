@@ -12,10 +12,10 @@ def test_cmd(router):
 
 
 def test_cmd_multilines(router):
-    output = router.cmd_multiline([
+    output = router.cmd_multiline(
         'return [/system identity get name]',
         'return [/system note get note]',
-    ])
+    )
 
     assert router.identity in output
     assert 'Test note' in output

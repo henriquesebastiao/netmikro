@@ -1,5 +1,3 @@
-from typing import List
-
 from netmikro.modules import Ip, System
 
 
@@ -71,11 +69,11 @@ class RouterOS(Ip, System):
             expect_string=rf'\[{self._username}@[^]]+\]',
         )
 
-    def cmd_multiline(self, commands: List[str]) -> str:
+    def cmd_multiline(self, *args) -> str:
         """Runs multiple commands in the router's terminal.
 
         Args:
-            commands (List[str]): List of commands to be executed.
+            *args (str): List of commands to be executed.
 
         Returns:
             str: Output of the commands.
@@ -87,4 +85,5 @@ class RouterOS(Ip, System):
             ... ])
             ['name: Netmikro', 'note: Test']
         """
+        commands = [x for x in args]
         return self._connection.send_multiline(commands)
