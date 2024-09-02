@@ -43,7 +43,7 @@ ruff = "^0.6.2"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs-material = "^9.2.8"
-mkdocstrings = ">=0.23,<0.26"
+mkdocstrings = ">=0.23,<0.27"
 mkdocstrings-python = "^1.6.2"
 mkdocs-macros-plugin = "^1.0.5"
 jinja2 = "^3.1.3"
