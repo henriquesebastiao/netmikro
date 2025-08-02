@@ -1,11 +1,11 @@
-<img src="docs/assets/netmikro.png" width="100">
-
 # Netmikro
 
 [![CI](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml/badge.svg)](https://github.com/henriquesebastiao/netmikro/actions/workflows/ci.yml)
-[![Documentation Status](https://readthedocs.org/projects/netmikro/badge/?version=latest)](https://netmikro.henriquesebastiao.com/en/latest/?badge=latest)
-[![Coverage](docs/assets/coverage.svg)](https://github.com/henriquesebastiao/netmikro)
-[![PyPI version](https://badge.fury.io/py/netmikro.svg)](https://badge.fury.io/py/netmikro)
+[![Static Badge](https://img.shields.io/badge/status-dev-blue)](https://github.com/henriquesebastiao/netmikro/)
+[![GitHub Release](https://img.shields.io/github/v/release/henriquesebastiao/netmikro?color=blue)](https://github.com/henriquesebastiao/netmikro/releases)
+[![GitHub License](https://img.shields.io/github/license/henriquesebastiao/netmikro?color=blue)](https://github.com/henriquesebastiao/netmikro/blob/main/LICENSE)
+[![Visitors](https://api.visitorbadge.io/api/visitors?path=henriquesebastiao%2Fnetmikro&label=repository%20visits&countColor=%231182c3&style=flat)](https://github.com/henriquesebastiao/netmikro)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fnetmikro.henriquesebastiao.com%2Fen%2Flatest%2F%3Fbadge%3Dlatest)](https://netmikro.henriquesebastiao.com/en/latest/?badge=latest)
 
 Netmikro is a simple library that provides an easy way to manage Mikrotik routers, simplifying configuration and monitoring tasks.
 
