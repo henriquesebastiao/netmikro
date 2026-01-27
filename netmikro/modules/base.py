@@ -131,7 +131,8 @@ class Base:
             list[IPv4Address]: List of IP addresses.
         """
         output = (
-            self._connection.send_command(f'return [{command}]')
+            self._connection
+            .send_command(f'return [{command}]')
             .strip()
             .split(';')
         )

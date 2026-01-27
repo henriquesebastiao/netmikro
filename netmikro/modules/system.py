@@ -1,6 +1,5 @@
 from datetime import date, time
 from ipaddress import IPv4Address
-from typing import List
 
 from netmikro.exceptions import InvalidNtpMode
 from netmikro.modules.base import Base
@@ -261,7 +260,7 @@ class System(Base):
 
     def ntp_client_set(
         self,
-        servers: List[IPv4Address],
+        servers: list[IPv4Address],
         enabled: bool = True,
         mode: str = 'unicast',
         vrf: str = 'main',

@@ -1,9 +1,8 @@
-from typing import Union
 
 from netmikro.exceptions import UndefinedBooleanValue
 
 
-def boolean(string: str) -> Union[bool, None, str]:
+def boolean(string: str) -> bool | None | str:
     """Convert a string to a boolean value.
 
     Args:
