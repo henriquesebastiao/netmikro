@@ -1,4 +1,3 @@
-
 from netmikro.exceptions import UndefinedBooleanValue
 
 
