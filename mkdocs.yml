@@ -2,9 +2,7 @@ site_name: Netmikro Documentation
 site_url: https://netmikro.henriquesebastiao.com/
 repo_url: https://github.com/henriquesebastiao/netmikro
 repo_name: henriquesebastiao/netmikro
-
 copyright: 2024 - Henrique Sebastião
-
 nav:
   - Netmikro: index.md
   - API reference:
@@ -16,7 +14,6 @@ nav:
       - Validadores: others/validators.md
   - Estrutura: structure.md
   - Contributing: contributing.md
-
 theme:
   name: material
   logo: assets/netmikro.png
@@ -33,7 +30,6 @@ theme:
       toggle:
         icon: material/lightbulb-outline
         name: Switch to light mode
-
     # Palette toggle for light mode
     - scheme: default
       primary: black
@@ -53,7 +49,6 @@ theme:
     - navigation.top
     - navigation.footer
     - content.code.annotate
-
 markdown_extensions:
   - toc:
       permalink: true
@@ -79,7 +74,6 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.superfences
-
 plugins:
   - mkdocstrings:
       handlers:
@@ -96,7 +90,6 @@ plugins:
       token: !ENV ["GH_TOKEN"]
   - git-revision-date-localized:
       type: date
-
 extra:
   variables:
     version: 0.1.0
@@ -116,12 +109,10 @@ extra:
     - icon: fontawesome/solid/globe
       link: https://henriquesebastiao.com
       name: henriquesebastiao.com
-
 extra_css:
   - css/extra.css
   - css/termynal.css
   - css/custom.css
-
 extra_javascript:
   - js/termynal.js
   - js/custom.js
