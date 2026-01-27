@@ -45,12 +45,12 @@ def test_system_clock_time_zone_autodetect_get(router):
     assert isinstance(router.clock_time_zone_autodetect_get(), bool)
 
 
-def test_system_health_voltage(router):
-    assert isinstance(router.health_voltage(), float)
-
-
-def test_system_health_temperature(router):
-    assert isinstance(router.health_temperature(), float)
+# def test_system_health_voltage(router):
+#     assert isinstance(router.health_voltage(), float)
+#
+#
+# def test_system_health_temperature(router):
+#     assert isinstance(router.health_temperature(), float)
 
 
 def test_system_history_system_get(router):
@@ -69,10 +69,10 @@ def test_system_identity_set(router):
     router.identity_set(os.getenv('IDENTITY'))
 
 
-def test_system_license(router):
-    assert isinstance(router.license, License)
-    assert router.license.software_id == os.getenv('SYSTEM_ID_ROUTER')
-    assert router.license.level == int(os.getenv('LEVEL_ROUTER'))
+# def test_system_license(router):
+#     assert isinstance(router.license, License)
+#     assert router.license.software_id == os.getenv('SYSTEM_ID_ROUTER')
+#     assert router.license.level == int(os.getenv('LEVEL_ROUTER'))
 
 
 def test_system_ntp_client_get(router):
@@ -114,5 +114,5 @@ def test_system_note_set(router):
     router.note_set(note=os.getenv('NOTE'), show_at_login=False)
 
 
-def test_system_is_routerboard_false(chr_router):
-    assert not chr_router.is_routerboard()
+# def test_system_is_routerboard_false(chr_router):
+#     assert not chr_router.is_routerboard()

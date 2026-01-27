@@ -253,7 +253,6 @@ class System(Base):
             vrf=self._get(f'{prefix} vrf'),
             freq_diff=self._get_number(f'{prefix} freq-drift'),
             status=self._get(f'{prefix} status'),
-            synced_server=IPv4Address(self._get(f'{prefix} synced-server')),
             synced_stratum=self._get_number(f'{prefix} synced-stratum'),
             system_offset=self._get_number(f'{prefix} system-offset'),
         )

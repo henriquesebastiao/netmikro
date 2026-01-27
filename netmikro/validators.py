@@ -51,7 +51,6 @@ class NTPClient(BaseModel):
     vrf: str
     freq_diff: int
     status: str
-    synced_server: IPv4Address
     synced_stratum: int
     system_offset: int
 
