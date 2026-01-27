@@ -27,31 +27,31 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-netmiko = "^4.4.0"
-python-dotenv = "^1.0.1"
-pydantic = "^2.8.2"
+netmiko = "^4.6.0"
+python-dotenv = "^1.2.1"
+pydantic = "^2.12.5"
 
 [tool.poetry.group.dev.dependencies]
-pytest-cov = ">=4.1,<7.0"
-taskipy = "^1.13.0"
+pytest-cov = ">=6.3.0,<7.0"
+taskipy = "^1.14.1"
 coverage-badge = "^1.1.2"
 setuptools = ">=69.5.1,<76.0.0"
-pytest = "^8.3.2"
-bandit = {extras = ["toml"], version = "^1.7.9"}
+pytest = "^8.4.2"
+bandit = {extras = ["toml"], version = "^1.9.3"}
 radon = {extras = ["toml"], version = "^6.0.1"}
-ruff = ">=0.6.2,<0.8.0"
+ruff = ">=0.7.4,<0.8.0"
 
 [tool.poetry.group.doc.dependencies]
-mkdocs-material = "^9.2.8"
-mkdocstrings = ">=0.23,<0.28"
-mkdocstrings-python = "^1.6.2"
-mkdocs-macros-plugin = "^1.0.5"
-jinja2 = "^3.1.3"
-pygments = "^2.17.2"
-pymdown-extensions = "^10.7"
-mkdocs-git-committers-plugin-2 = "^2.2.3"
-mkdocs-git-authors-plugin = ">=0.7.2,<0.10.0"
-mkdocs-git-revision-date-localized-plugin = "^1.2.2"
+mkdocs-material = "^9.7.1"
+mkdocstrings = ">=0.27,<0.28"
+mkdocstrings-python = "^1.13.0"
+mkdocs-macros-plugin = "^1.5.0"
+jinja2 = "^3.1.6"
+pygments = "^2.19.2"
+pymdown-extensions = "^10.20.1"
+mkdocs-git-committers-plugin-2 = "^2.5.0"
+mkdocs-git-authors-plugin = ">=0.9.6,<0.10.0"
+mkdocs-git-revision-date-localized-plugin = "^1.5.1"
 
 [build-system]
 requires = ["poetry-core"]
