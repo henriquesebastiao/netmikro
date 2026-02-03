@@ -37,7 +37,7 @@ setuptools = ">=69.5.1,<81.0.0"
 pytest = ">=8.4.2,<10.0.0"
 bandit = {extras = ["toml"], version = "^1.9.3"}
 radon = {extras = ["toml"], version = "^6.0.1"}
-ruff = ">=0.7.4,<0.15.0"
+ruff = ">=0.7.4,<0.16.0"
 
 [tool.poetry.group.doc.dependencies]
 mkdocs-material = "^9.7.1"
